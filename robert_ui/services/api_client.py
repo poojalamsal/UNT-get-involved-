@@ -16,7 +16,7 @@ API_BASE = os.getenv("API_BASE", "http://localhost:5000/api")
 
 def _auth_headers():
     """
-    OPTIONAL (Aahi):
+    OPTIONAL (Aashi):
     If join/search endpoints require login, we’ll attach auth here.
     For now, it returns an empty dict so the calls still work in dev.
     """
