@@ -1,37 +1,84 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Explore Clubs</title>
+  <meta charset="UTF-8">
+  <title>UNT Campus Involvement - Journeys with Community</title>
 </head>
 <body>
-  <!-- TODO (Pooja): replace this with the final Explore/Clubs List UI -->
-  <h1>Explore Clubs</h1>
 
-  <form method="GET" action="/clubs">
-    <input name="search" placeholder="Search clubs..." value="{{ search }}" />
-    <input name="category" placeholder="Category..." value="{{ category }}" />
-    <button type="submit">Search</button>
-  </form>
+  <header>
+    <h1>UNT Campus Involvement</h1>
+    <nav>
+      <ul>
+        <li><a href="#">Genre Search</a></li>
+        <li><a href="#">Calendar</a></li>
+        <li><a href="/clubs">Home</a></li>
+        <li><button type="button">Login / Signup</button></li>
+      </ul>
+    </nav>
+  </header>
 
-  {% if error %}
-    <p style="color:red;">Error: {{ error }}</p>
-  {% endif %}
+  <main>
+    <hr>
 
-  <!-- Data from Ifunaya: GET /api/clubs -->
-  {% if clubs|length == 0 %}
-    <p>No clubs found.</p>
-  {% else %}
-    <ul>
-      {% for club in clubs %}
-        <!-- TODO (Ifunaya): confirm field names -->
-        <li>
-          <a href="/clubs/{{ club['id'] }}">{{ club['name'] }}</a>
-          <div>{{ club.get('description','') }}</div>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+    <section>
+      <h1>Journeys with Community</h1>
+      <p>Find your interests, clubs, friends.</p>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2>Start with</h2>
+
+      <button type="button">
+        <h3>Genre Search</h3>
+        <p>"What do you like doing?"</p>
+      </button>
+
+      <button type="button">
+        <h3>See Calendar</h3>
+        <p>"Free time? Join"</p>
+      </button>
+
+      <button type="button">
+        <h3>Check Your Page</h3>
+        <p>"Anything new?"</p>
+      </button>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2>Explore Clubs</h2>
+
+      <!-- Search box connects to your /clubs route -->
+      <form method="GET" action="/clubs">
+        <input name="search" placeholder="Search clubs..." value="{{ search }}" />
+        <input name="category" placeholder="Category..." value="{{ category }}" />
+        <button type="submit">Search</button>
+      </form>
+
+      {% if error %}
+        <p style="color:red;">Error: {{ error }}</p>
+      {% endif %}
+
+      {% if clubs|length == 0 %}
+        <p>No clubs found.</p>
+      {% else %}
+        <ul>
+          {% for club in clubs %}
+            <!-- Ifunaya: confirm these field names -->
+            <li>
+              <a href="/clubs/{{ club['id'] }}">{{ club['name'] }}</a>
+              <p>{{ club.get('description', '') }}</p>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </section>
+
+  </main>
+
 </body>
 </html>
