@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Explore Clubs</title>
+</head>
+<body>
+  <!-- TODO (Pooja): replace this with the final Explore/Clubs List UI -->
+  <h1>Explore Clubs</h1>
+
+  <form method="GET" action="/clubs">
+    <input name="search" placeholder="Search clubs..." value="{{ search }}" />
+    <input name="category" placeholder="Category..." value="{{ category }}" />
+    <button type="submit">Search</button>
+  </form>
+
+  {% if error %}
+    <p style="color:red;">Error: {{ error }}</p>
+  {% endif %}
+
+  <!-- Data from Ifunaya: GET /api/clubs -->
+  {% if clubs|length == 0 %}
+    <p>No clubs found.</p>
+  {% else %}
+    <ul>
+      {% for club in clubs %}
+        <!-- TODO (Ifunaya): confirm field names -->
+        <li>
+          <a href="/clubs/{{ club['id'] }}">{{ club['name'] }}</a>
+          <div>{{ club.get('description','') }}</div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</body>
+</html>
