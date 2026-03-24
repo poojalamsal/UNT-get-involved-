@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UNT Campus Involvement</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --green: #00853E;
+    --green-dark: #005f2c;
+    --green-light: #e8f5ee;
+    --green-mid: #00a84f;
+    --gold: #C9A84C;
+    --bg: #f4f7f5;
+    --white: #ffffff;
+    --surface: #ffffff;
+    --border: #e0e8e3;
+    --text: #0f1f16;
+    --text-mid: #4a6355;
+    --text-muted: #8aa395;
+    --red: #d44;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* VIEWS */
+  .view { display: none; min-height: 100vh; }
+  .view.active { display: block; animation: rise .3s ease; }
+  @keyframes rise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 60px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem;
+    background: var(--green-dark);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+  .logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #fff; cursor: pointer; display:flex;align-items:center;gap:.5rem; }
+  .logo-dot { width:8px;height:8px;border-radius:50%;background:var(--gold); }
+  .nav-links { display:flex;gap:.2rem; }
+  .nav-btn { background:none;border:none;color:rgba(255,255,255,0.7);font-family:'Outfit',sans-serif;font-size:.88rem;padding:.4rem .9rem;border-radius:6px;cursor:pointer;transition:all .18s; }
+  .nav-btn:hover,.nav-btn.active { color:#fff;background:rgba(255,255,255,0.12); }
+  .nav-right { display:flex;align-items:center;gap:.75rem; }
+  .nav-search { background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:.38rem .85rem;color:#fff;font-family:'Outfit',sans-serif;font-size:.85rem;width:190px;outline:none;transition:all .18s; }
+  .nav-search::placeholder { color:rgba(255,255,255,0.45); }
+  .nav-search:focus { background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.4); }
+  .btn-nav-login { background:var(--gold);color:#fff;border:none;padding:.4rem 1rem;border-radius:7px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;transition:all .18s; }
+  .btn-nav-login:hover { background:#b8933e; }
+  .nav-user { display:none;align-items:center;gap:.6rem; }
+  .nav-avatar { width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;cursor:pointer; }
+  .nav-username { color:rgba(255,255,255,0.85);font-size:.85rem; }
+
+  /* SHARED */
+  .page { padding: 78px 2rem 3rem; max-width: 1140px; margin: 0 auto; }
+  .eyebrow { font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:.4rem; }
+  .page-title { font-family:'Playfair Display',serif;font-size:2.2rem;margin-bottom:.5rem;line-height:1.15; }
+  .page-sub { color:var(--text-mid);font-size:.95rem;line-height:1.6;margin-bottom:2rem; }
+  .btn-primary { background:var(--green);color:#fff;border:none;padding:.65rem 1.4rem;border-radius:8px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;transition:all .18s;display:inline-flex;align-items:center;gap:.4rem; }
+  .btn-primary:hover { background:var(--green-dark);transform:translateY(-1px); }
+  .btn-secondary { background:var(--white);color:var(--green);border:1.5px solid var(--green);padding:.6rem 1.3rem;border-radius:8px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;transition:all .18s; }
+  .btn-secondary:hover { background:var(--green-light); }
+  .card { background:var(--white);border:1px solid var(--border);border-radius:14px; }
+
+  /* ── LANDING ── */
+  #view-home { background: var(--white); }
+  .hero { min-height:100vh;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;padding:80px 2rem 3rem;max-width:1140px;margin:0 auto; }
+  .hero-tag { display:inline-flex;align-items:center;gap:.5rem;background:var(--green-light);border:1px solid #b8dfc9;border-radius:20px;padding:.3rem .9rem;font-size:.8rem;color:var(--green-dark);font-weight:500;margin-bottom:1.5rem; }
+  .hero-title { font-family:'Playfair Display',serif;font-size:3.8rem;line-height:1.08;margin-bottom:1.2rem; }
+  .hero-title span { color:var(--green); }
+  .hero-desc { color:var(--text-mid);font-size:1.05rem;line-height:1.75;margin-bottom:2rem; }
+  .hero-btns { display:flex;gap:1rem;flex-wrap:wrap; }
+  .hero-numbers { display:flex;gap:2.5rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border); }
+  .hn-val { font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--green-dark); }
+  .hn-lbl { font-size:.8rem;color:var(--text-muted); }
+  .hero-right { display:flex;flex-direction:column;gap:1rem; }
+  .preview-card { background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,60,30,0.06); }
+  .preview-card:hover { border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,60,30,0.1); }
+  .pc-cat { font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:.4rem; }
+  .pc-name { font-weight:600;font-size:.95rem;margin-bottom:.25rem; }
+  .pc-meta { font-size:.8rem;color:var(--text-muted); }
+  .features { display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:1140px;margin:0 auto 4rem;padding:0 2rem; }
+  .feat { background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.5rem; }
+  .feat-icon { font-size:1.6rem;margin-bottom:.75rem; }
+  .feat-title { font-weight:600;margin-bottom:.4rem; }
+  .feat-desc { font-size:.85rem;color:var(--text-mid);line-height:1.6; }
+
+  /* ── EXPLORE ── */
+  .genre-pills { display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem; }
+  .pill { background:var(--white);border:1.5px solid var(--border);color:var(--text-mid);font-size:.8rem;padding:.35rem .85rem;border-radius:20px;cursor:pointer;transition:all .18s;font-weight:500; }
+  .pill:hover { border-color:var(--green);color:var(--green); }
+  .pill.on { background:var(--green);border-color:var(--green);color:#fff; }
+  .filter-row { display:flex;gap:.75rem;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap; }
+  .sel { background:var(--white);border:1.5px solid var(--border);color:var(--text);padding:.42rem .9rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.85rem;outline:none;cursor:pointer; }
+  .result-ct { font-size:.82rem;color:var(--text-muted);margin-left:auto; }
+  .clubs-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:1rem; }
+  .club-card { background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .2s; }
+  .club-card:hover { border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,60,30,0.09); }
+  .cc-accent { height:5px; }
+  .cc-body { padding:1.2rem 1.3rem; }
+  .cc-top { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem; }
+  .cc-icon { width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem; }
+  .cc-star { background:none;border:none;font-size:1.15rem;cursor:pointer;color:#ccc;transition:color .18s; }
+  .cc-star.on { color:var(--gold); }
+  .cc-star:hover { color:var(--gold); }
+  .cc-name { font-weight:600;margin-bottom:.2rem; }
+  .cc-genre { font-size:.75rem;color:var(--green);font-weight:500;margin-bottom:.5rem; }
+  .cc-desc { font-size:.83rem;color:var(--text-mid);line-height:1.55;margin-bottom:.9rem; }
+  .cc-foot { display:flex;justify-content:space-between; }
+  .cc-meta { font-size:.78rem;color:var(--text-muted); }
+  .empty { text-align:center;padding:4rem;color:var(--text-muted);grid-column:1/-1; }
+  .empty-ico { font-size:2.5rem;margin-bottom:.75rem; }
+  .empty-t { font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--text);margin-bottom:.4rem; }
+
+  /* ── GENRE SEARCH ── */
+  .genre-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:2rem; }
+  .genre-tile { background:var(--white);border:2px solid var(--border);border-radius:12px;padding:1rem .75rem;text-align:center;cursor:pointer;transition:all .18s; }
+  .genre-tile:hover { border-color:var(--green);background:var(--green-light); }
+  .genre-tile.on { border-color:var(--green);background:var(--green);color:#fff; }
+  .genre-tile.on .gt-icon,.genre-tile.on .gt-name { color:#fff; }
+  .gt-icon { font-size:1.5rem;margin-bottom:.4rem; }
+  .gt-name { font-size:.8rem;font-weight:500;color:var(--text-mid); }
+  .genre-tile.on .gt-name { color:#fff; }
+  .genre-actions { display:flex;gap:1rem;margin-bottom:2rem; }
+
+  /* ── CALENDAR ── */
+  .cal-layout { display:grid;grid-template-columns:1fr 320px;gap:2rem; }
+  .cal-head { display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem; }
+  .cal-month-lbl { font-family:'Playfair Display',serif;font-size:1.5rem; }
+  .cal-arrow { background:var(--white);border:1.5px solid var(--border);color:var(--text);padding:.38rem .85rem;border-radius:8px;cursor:pointer;font-size:.9rem;transition:all .18s; }
+  .cal-arrow:hover { border-color:var(--green);color:var(--green); }
+  .cal-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:3px; }
+  .cal-dlbl { text-align:center;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);padding:.4rem 0; }
+  .cal-day { aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:9px;cursor:pointer;font-size:.87rem;transition:all .15s;border:1.5px solid transparent;background:var(--white);position:relative; }
+  .cal-day:hover { border-color:var(--border);background:var(--green-light); }
+  .cal-day.today { border-color:var(--green);color:var(--green);font-weight:700; }
+  .cal-day.sel { background:var(--green);color:#fff;border-color:var(--green); }
+  .cal-day.has-ev::after { content:'';position:absolute;bottom:5px;width:4px;height:4px;border-radius:50%;background:var(--green); }
+  .cal-day.sel.has-ev::after { background:#fff; }
+  .cal-day.dim { opacity:.3; }
+  .sidebar { background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.4rem; }
+  .sb-title { font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:1rem; }
+  .ev-item { display:flex;gap:.85rem;align-items:flex-start;padding:.8rem 0;border-bottom:1px solid var(--border); }
+  .ev-item:last-child { border:none; }
+  .ev-time { min-width:40px;text-align:center;background:var(--green-light);border-radius:7px;padding:.35rem .2rem; }
+  .ev-h { font-size:.95rem;font-weight:700;color:var(--green-dark);line-height:1; }
+  .ev-p { font-size:.65rem;color:var(--green); }
+  .ev-name { font-size:.87rem;font-weight:500;margin-bottom:.15rem; }
+  .ev-org { font-size:.77rem;color:var(--text-muted); }
+  .add-class-btn { width:100%;margin-top:1.1rem;padding:.65rem;background:var(--bg);border:1.5px dashed var(--border);border-radius:8px;color:var(--text-muted);font-family:'Outfit',sans-serif;font-size:.84rem;cursor:pointer;transition:all .18s; }
+  .add-class-btn:hover { border-color:var(--green);color:var(--green); }
+
+  /* ── DETAIL PAGE ── */
+  .back-btn { background:none;border:none;color:var(--text-mid);cursor:pointer;display:flex;align-items:center;gap:.45rem;font-family:'Outfit',sans-serif;font-size:.88rem;margin-bottom:1.5rem;transition:color .18s; }
+  .back-btn:hover { color:var(--green); }
+  .detail-top { display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:2rem; }
+  .detail-icon { width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0; }
+  .detail-name { font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.25rem; }
+  .detail-genre { color:var(--green);font-size:.88rem;font-weight:500; }
+  .tabs { display:flex;gap:.2rem;border-bottom:2px solid var(--border);margin-bottom:1.5rem; }
+  .tab { background:none;border:none;color:var(--text-muted);font-family:'Outfit',sans-serif;font-size:.9rem;padding:.65rem 1.1rem;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s; }
+  .tab.on { color:var(--green);border-bottom-color:var(--green);font-weight:600; }
+  .tab-panel { display:none; }
+  .tab-panel.on { display:block; }
+  .info-card { background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1rem; }
+  .info-card h3 { font-family:'Playfair Display',serif;margin-bottom:.75rem; }
+  .chips-row { display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.75rem; }
+  .info-chip { background:var(--green-light);border:1px solid #b8dfc9;color:var(--green-dark);font-size:.8rem;padding:.3rem .75rem;border-radius:6px; }
+  .officer-list { display:flex;flex-direction:column;gap:.7rem; }
+  .officer-row { display:flex;align-items:center;gap:.7rem; }
+  .o-av { width:36px;height:36px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--green-dark);font-size:.85rem; }
+  .o-name { font-size:.88rem;font-weight:500; }
+  .o-role { font-size:.77rem;color:var(--text-muted); }
+  .ev-row { padding:.8rem 0;border-bottom:1px solid var(--border); }
+  .ev-row:last-child { border:none; }
+  .ev-row-title { font-size:.88rem;font-weight:500;margin-bottom:.2rem; }
+  .ev-row-meta { font-size:.78rem;color:var(--text-muted); }
+
+  /* ── PROFILE ── */
+  .profile-top { display:flex;gap:1.5rem;align-items:center;margin-bottom:2rem; }
+  .p-avatar { width:76px;height:76px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.8rem;color:#fff;border:3px solid var(--green-light); }
+  .p-name { font-family:'Playfair Display',serif;font-size:1.7rem;margin-bottom:.2rem; }
+  .p-email { font-size:.88rem;color:var(--text-muted); }
+  .p-stats { display:flex;gap:2rem;margin-top:.9rem; }
+  .p-stat-v { font-weight:700;font-size:1.1rem; }
+  .p-stat-l { font-size:.78rem;color:var(--text-muted); }
+  .profile-grid { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
+  .p-section { background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.5rem; }
+  .p-sec-title { font-family:'Playfair Display',serif;margin-bottom:1rem; }
+  .saved-row { display:flex;align-items:center;gap:.8rem;padding:.7rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .18s; }
+  .saved-row:last-child { border:none; }
+  .saved-row:hover { opacity:.75; }
+  .sr-ico { width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem; }
+  .sr-name { font-size:.87rem;font-weight:500;flex:1; }
+  .sr-genre { font-size:.75rem;color:var(--green); }
+  .upe { padding:.75rem 0;border-bottom:1px solid var(--border); }
+  .upe:last-child { border:none; }
+  .upe-t { font-size:.88rem;font-weight:500;margin-bottom:.2rem; }
+  .upe-m { font-size:.78rem;color:var(--text-muted); }
+
+  /* ── LOGIN / SIGNUP ── */
+  #view-login, #view-signup {
+    display:none; min-height:100vh;
+    background: linear-gradient(135deg, var(--green-dark) 0%, #003d1f 100%);
+    align-items:center; justify-content:center;
+  }
+  #view-login.active, #view-signup.active { display:flex; }
+  .auth-card { background:var(--white);border-radius:20px;padding:2.5rem;width:420px;box-shadow:0 24px 60px rgba(0,0,0,0.25); }
+  .auth-logo { font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--green-dark);margin-bottom:.2rem;display:flex;align-items:center;gap:.5rem; }
+  .auth-sub { font-size:.85rem;color:var(--text-muted);margin-bottom:2rem; }
+  .auth-title { font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.2rem; }
+  .auth-switch { font-size:.82rem;color:var(--text-muted);margin-bottom:1.5rem; }
+  .auth-switch a { color:var(--green);cursor:pointer;font-weight:500; }
+  .field { margin-bottom:1rem; }
+  .field label { display:block;font-size:.8rem;font-weight:500;color:var(--text-mid);margin-bottom:.35rem; }
+  .field input { width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.62rem .9rem;color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;transition:border .18s; }
+  .field input:focus { border-color:var(--green); }
+  .auth-err { color:var(--red);font-size:.82rem;margin-bottom:.75rem;display:none;background:#fff0f0;border:1px solid #ffcece;border-radius:6px;padding:.5rem .75rem; }
+  .auth-note { font-size:.78rem;color:var(--text-muted);margin-top:1rem;text-align:center; }
+  .auth-note a { color:var(--green);cursor:pointer; }
+  .guest-link { display:block;text-align:center;margin-top:.75rem;font-size:.82rem;color:var(--text-muted);cursor:pointer; }
+  .guest-link:hover { color:var(--green); }
+
+  /* ── MODAL ── */
+  .overlay { display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);backdrop-filter:blur(3px);align-items:center;justify-content:center; }
+  .overlay.open { display:flex; }
+  .modal { background:var(--white);border-radius:16px;padding:2rem;width:380px;animation:rise .25s ease; }
+  .modal-title { font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:.25rem; }
+  .modal-sub { font-size:.84rem;color:var(--text-muted);margin-bottom:1.5rem; }
+  .modal-close { float:right;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text-muted); }
+
+  /* ── TOAST ── */
+  .toast { position:fixed;bottom:1.8rem;right:1.8rem;z-index:400;background:var(--green-dark);color:#fff;border-radius:10px;padding:.85rem 1.2rem;font-size:.87rem;display:flex;align-items:center;gap:.5rem;transform:translateY(80px);transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.2); }
+  .toast.show { transform:translateY(0); }
+
+  @media(max-width:780px){
+    .hero{grid-template-columns:1fr;} .hero-right{display:none;}
+    .features{grid-template-columns:1fr;}
+    .cal-layout{grid-template-columns:1fr;}
+    .profile-grid{grid-template-columns:1fr;}
+    .genre-grid{grid-template-columns:repeat(2,1fr);}
+    .detail-top{flex-wrap:wrap;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="go('home')"><div class="logo-dot"></div> UNT Campus Involvement</div>
+  <div class="nav-links">
+    <button class="nav-btn" id="nb-home" onclick="go('home');na('nb-home')">Home</button>
+    <button class="nav-btn" id="nb-explore" onclick="go('explore');na('nb-explore')">Explore</button>
+    <button class="nav-btn" id="nb-genre" onclick="go('genre');na('nb-genre')">Genre Search</button>
+    <button class="nav-btn" id="nb-cal" onclick="go('calendar');na('nb-cal')">Calendar</button>
+    <button class="nav-btn" id="nb-profile" onclick="gotoProfile()">My Page</button>
+  </div>
+  <div class="nav-right">
+    <input class="nav-search" placeholder="🔍  Search clubs…" oninput="gsearch(this.value)"/>
+    <button class="btn-nav-login" id="nav-login-btn" onclick="go('login')">Log In</button>
+    <div class="nav-user" id="nav-user">
+      <div class="nav-avatar" id="nav-av" onclick="go('profile');na('nb-profile')">M</div>
+      <span class="nav-username" id="nav-uname">Maria</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HOME ══ -->
+<div class="view active" id="view-home">
+  <div class="hero">
+    <div>
+      <div class="hero-tag">🌿 University of North Texas</div>
+      <h1 class="hero-title">Find your place<br>on <span>campus.</span></h1>
+      <p class="hero-desc">Discover clubs, organizations, and events all in one place. Stop missing out — connect with the UNT community today.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="go('explore');na('nb-explore')">Explore Clubs →</button>
+        <button class="btn-secondary" onclick="go('genre');na('nb-genre')">Genre Search</button>
+      </div>
+      <div class="hero-numbers">
+        <div><div class="hn-val">120+</div><div class="hn-lbl">Clubs & Orgs</div></div>
+        <div><div class="hn-val">40+</div><div class="hn-lbl">Events this month</div></div>
+        <div><div class="hn-val">21</div><div class="hn-lbl">Categories</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="preview-card" onclick="openClub(0)">
+        <div class="pc-cat">💻 Technology</div>
+        <div class="pc-name">Coding Club</div>
+        <div class="pc-meta">📅 Tuesdays 5 PM · Wooten Hall 245</div>
+      </div>
+      <div class="preview-card" onclick="openClub(1)">
+        <div class="pc-cat">🎵 Music</div>
+        <div class="pc-name">Music Society</div>
+        <div class="pc-meta">📅 Thursdays 6 PM · Music Building 205</div>
+      </div>
+      <div class="preview-card" onclick="openClub(2)">
+        <div class="pc-cat">🤝 Community</div>
+        <div class="pc-name">Volunteer Club</div>
+        <div class="pc-meta">📅 Fridays 4 PM · University Union 325</div>
+      </div>
+    </div>
+  </div>
+  <div class="features">
+    <div class="feat"><div class="feat-icon">🔍</div><div class="feat-title">Genre Search</div><div class="feat-desc">Filter clubs by your interests — tech, arts, sports, volunteering, and 17 more categories.</div></div>
+    <div class="feat"><div class="feat-icon">📅</div><div class="feat-title">Campus Calendar</div><div class="feat-desc">See all events in one calendar. Add your class schedule to avoid conflicts.</div></div>
+    <div class="feat"><div class="feat-icon">⭐</div><div class="feat-title">Save & Track</div><div class="feat-desc">Save your favorite clubs and access them from your personal page anytime.</div></div>
+  </div>
+</div>
+
+<!-- ══ EXPLORE ══ -->
+<div class="view" id="view-explore">
+  <div class="page">
+    <div class="eyebrow">Browse</div>
+    <h1 class="page-title">Explore Clubs & Orgs</h1>
+    <p class="page-sub">Filter by interest or browse all clubs and organizations at UNT.</p>
+    <div class="genre-pills" id="explore-pills"></div>
+    <div class="filter-row">
+      <select class="sel" id="day-filter" onchange="renderClubs()">
+        <option value="">All Days</option>
+        <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+        <option>Thursday</option><option>Friday</option>
+      </select>
+      <button class="btn-secondary" onclick="clearFilters()" style="padding:.4rem .9rem;font-size:.85rem;">Clear</button>
+      <span class="result-ct" id="result-ct"></span>
+    </div>
+    <div class="clubs-grid" id="clubs-grid"></div>
+  </div>
+</div>
+
+<!-- ══ GENRE SEARCH ══ -->
+<div class="view" id="view-genre">
+  <div class="page">
+    <div class="eyebrow">Genre Search</div>
+    <h1 class="page-title">Find by Your Interest</h1>
+    <p class="page-sub">Choose what you like — see related clubs. You can pick multiple or skip to see all.</p>
+    <div class="genre-grid" id="genre-grid"></div>
+    <div class="genre-actions">
+      <button class="btn-primary" onclick="applyGenres()">Look Up →</button>
+      <button class="btn-secondary" onclick="skipGenres()">Skip — Show All</button>
+    </div>
+    <div class="clubs-grid" id="genre-results" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ══ CALENDAR ══ -->
+<div class="view" id="view-calendar">
+  <div class="page">
+    <div class="eyebrow">Events</div>
+    <h1 class="page-title">Campus Calendar</h1>
+    <p class="page-sub" style="margin-bottom:1.5rem">Click any date to see what's happening. Add your classes to avoid conflicts.</p>
+    <div class="cal-layout">
+      <div>
+        <div class="cal-head">
+          <button class="cal-arrow" onclick="cm(-1)">← Prev</button>
+          <div class="cal-month-lbl" id="cal-lbl"></div>
+          <button class="cal-arrow" onclick="cm(1)">Next →</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+      <div>
+        <div class="sidebar">
+          <div class="sb-title" id="sb-title">Select a date</div>
+          <div id="sb-events"></div>
+          <button class="add-class-btn" onclick="openAddClass()">+ Add Class Schedule</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CLUB DETAIL ══ -->
+<div class="view" id="view-detail">
+  <div class="page">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div id="detail-body"></div>
+  </div>
+</div>
+
+<!-- ══ PROFILE ══ -->
+<div class="view" id="view-profile">
+  <div class="page">
+    <div class="eyebrow">My Page</div>
+    <div class="profile-top">
+      <div class="p-avatar" id="p-av">M</div>
+      <div>
+        <div class="p-name" id="p-name">Maria Lopez</div>
+        <div class="p-email" id="p-email">ml0001@unt.edu</div>
+        <div class="p-stats">
+          <div><div class="p-stat-v" id="p-saved-ct">0</div><div class="p-stat-l">Saved Clubs</div></div>
+          <div><div class="p-stat-v">3</div><div class="p-stat-l">Upcoming Events</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="profile-grid">
+      <div class="p-section"><div class="p-sec-title">⭐ Saved Clubs</div><div id="p-saved"></div></div>
+      <div class="p-section"><div class="p-sec-title">📅 Upcoming Events</div><div id="p-events"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div class="view" id="view-login">
+  <div class="auth-card">
+    <div class="auth-logo">🌿 UNT Campus Involvement</div>
+    <div class="auth-sub">University of North Texas</div>
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-switch">Don't have an account? <a onclick="go('signup')">Sign up</a></div>
+    <div class="auth-err" id="login-err">Please use a valid UNT email address ending in @unt.edu</div>
+    <div class="field"><label>UNT Email Address</label><input id="l-email" type="email" placeholder="abc1234@unt.edu"/></div>
+    <div class="field"><label>Password</label><input id="l-pass" type="password" placeholder="Enter your password"/></div>
+    <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.25rem" onclick="doLogin()">Log In</button>
+    <div class="auth-note">By logging in you agree to UNT's student conduct policies.</div>
+    <a class="guest-link" onclick="go('home');na('nb-home')">Continue as Guest →</a>
+  </div>
+</div>
+
+<!-- ══ SIGNUP ══ -->
+<div class="view" id="view-signup">
+  <div class="auth-card">
+    <div class="auth-logo">🌿 UNT Campus Involvement</div>
+    <div class="auth-sub">University of North Texas</div>
+    <div class="auth-title">Create Account</div>
+    <div class="auth-switch">Already have an account? <a onclick="go('login')">Log in</a></div>
+    <div class="auth-err" id="signup-err">Please use a valid UNT email address ending in @unt.edu</div>
+    <div class="field"><label>Full Name</label><input id="s-name" type="text" placeholder="Jane Eagle"/></div>
+    <div class="field"><label>UNT Email Address</label><input id="s-email" type="email" placeholder="abc1234@unt.edu"/></div>
+    <div class="field"><label>Password (min. 8 characters)</label><input id="s-pass" type="password" placeholder="Minimum 8 characters" minlength="8"/></div>
+    <div class="field"><label>Confirm Password</label><input id="s-conf" type="password" placeholder="Re-enter your password"/></div>
+    <div class="auth-err" id="signup-err2" style="display:none">Passwords do not match.</div>
+    <button class="btn-primary" style="width:100%;justify-content:center;margin-top:.25rem" onclick="doSignup()">Create Account</button>
+    <a class="guest-link" onclick="go('home');na('nb-home')">Continue as Guest →</a>
+  </div>
+</div>
+
+<!-- ADD CLASS MODAL -->
+<div class="overlay" id="modal-class">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('class')">✕</button>
+    <div class="modal-title">Add Class</div>
+    <div class="modal-sub">Add your class schedule to avoid conflicts with events</div>
+    <div class="field"><label>Class Name</label><input id="cls-name" type="text" placeholder="e.g. CSCE 3444 Software Engineering"/></div>
+    <div class="field"><label>Days (e.g. MWF, TR)</label><input id="cls-days" type="text" placeholder="MWF"/></div>
+    <div class="field"><label>Time</label><input id="cls-time" type="text" placeholder="2:00 PM – 3:20 PM"/></div>
+    <button class="btn-primary" style="width:100%;justify-content:center" onclick="addCls()">Add to Calendar</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ <span id="toast-txt"></span></div>
+
+<script>
+// ══════════════════════════════
+//  DATA — from genreSearch.js + expanded
+// ══════════════════════════════
+const CLUBS = [
+  { id:0, name:"Coding Club", category:"technology", emoji:"💻", color:"#dbeafe",
+    desc:"Workshops, hackathons, and tech talks every semester. Open to all skill levels.",
+    day:"Tuesday", time:"5:00 PM", location:"Wooten Hall 245", members:180,
+    officers:[{n:"Sarah Chen",r:"President"},{n:"Dev Patel",r:"VP"}],
+    events:["Hackathon Feb 28","React Workshop Mar 7","Git Basics Mar 5"] },
+  { id:1, name:"Music Society", category:"music", emoji:"🎵", color:"#ede9fe",
+    desc:"Jazz, classical, and contemporary ensemble open to all musicians on campus.",
+    day:"Thursday", time:"6:00 PM", location:"Music Building 205", members:55,
+    officers:[{n:"Clara Lin",r:"Director"},{n:"Sam Okafor",r:"Manager"}],
+    events:["Spring Concert Apr 5","Open Mic Night Mar 14"] },
+  { id:2, name:"Volunteer Club", category:"community", emoji:"🤝", color:"#dcfce7",
+    desc:"Community service in Denton — food drives, tutoring programs, neighborhood cleanups.",
+    day:"Friday", time:"4:00 PM", location:"University Union 325", members:140,
+    officers:[{n:"Rosa Gutierrez",r:"President"},{n:"Ben Kim",r:"Coordinator"}],
+    events:["Food Drive Mar 9","Tutoring Expo Mar 22"] },
+  { id:3, name:"UNT Art Society", category:"art", emoji:"🎨", color:"#fce7f3",
+    desc:"Exhibition nights, live painting, gallery visits, and collaborative art projects.",
+    day:"Thursday", time:"6:00 PM", location:"Art Building 110", members:72,
+    officers:[{n:"Mia Rossi",r:"President"},{n:"Jake Brown",r:"Outreach"}],
+    events:["Spring Gallery Mar 21","Life Drawing Mar 28"] },
+  { id:4, name:"Mean Green Fitness Club", category:"sports", emoji:"🏋️", color:"#d1fae5",
+    desc:"Weekly workout sessions, 5K runs, and wellness workshops open to all students.",
+    day:"Monday", time:"6:00 AM", location:"RecSports Center", members:95,
+    officers:[{n:"Mike Jordan",r:"President"},{n:"Aisha Diallo",r:"VP"}],
+    events:["5K Fun Run Mar 8","HIIT Workshop Mar 15"] },
+  { id:5, name:"Math Club", category:"education", emoji:"📐", color:"#fef3c7",
+    desc:"Problem-solving competitions, tutoring sessions, and math symposia for all levels.",
+    day:"Wednesday", time:"4:00 PM", location:"GAB 461", members:60,
+    officers:[{n:"Priya Sharma",r:"President"},{n:"Tom Wu",r:"Treasurer"}],
+    events:["Integration Bee Mar 12","Putnam Prep Mar 19"] },
+  { id:6, name:"International Students Assoc.", category:"cultural & international", emoji:"🌍", color:"#ffedd5",
+    desc:"Celebrating diversity at UNT through festivals, language exchanges, and networking.",
+    day:"Thursday", time:"5:30 PM", location:"Chestnut Hall 180", members:200,
+    officers:[{n:"Yuna Park",r:"President"},{n:"Ali Hassan",r:"VP"}],
+    events:["Culture Fest Apr 12","Language Exchange Mar 16"] },
+  { id:7, name:"UNT Gaming Club", category:"gaming", emoji:"🎮", color:"#e0e7ff",
+    desc:"Casual and competitive gaming — tournaments, LAN parties, and game dev meetups.",
+    day:"Wednesday", time:"7:00 PM", location:"Sage Hall 150", members:110,
+    officers:[{n:"Jordan Wells",r:"President"}],
+    events:["Smash Bros Tournament Mar 20","Game Dev Jam Apr 1"] },
+  { id:8, name:"Pre-Law Society", category:"business", emoji:"⚖️", color:"#fef9c3",
+    desc:"Mock trials, LSAT prep workshops, and networking with local attorneys.",
+    day:"Wednesday", time:"5:00 PM", location:"Sage Hall 250", members:45,
+    officers:[{n:"Diana Prince",r:"President"}],
+    events:["Mock Trial Mar 18","Law School Panel Apr 2"] },
+  { id:9, name:"UNT LGBTQIA+ Alliance", category:"lgbtqia+", emoji:"🏳️‍🌈", color:"#fce7f3",
+    desc:"A safe, inclusive space for LGBTQIA+ students and allies. Events, advocacy, and community.",
+    day:"Tuesday", time:"6:00 PM", location:"University Union 280", members:85,
+    officers:[{n:"Alex Rivera",r:"President"}],
+    events:["Pride Mixer Mar 25","Panel Discussion Apr 8"] },
+];
+
+// From genreSearch.js categories + genre_search.html full list
+const GENRES = [
+  {k:"all",       lbl:"All",                  icon:"🌐"},
+  {k:"art",       lbl:"Art",                  icon:"🎨"},
+  {k:"technology",lbl:"Technology",           icon:"💻"},
+  {k:"business",  lbl:"Business",             icon:"💼"},
+  {k:"sports",    lbl:"Sports",               icon:"⚽"},
+  {k:"music",     lbl:"Music",                icon:"🎵"},
+  {k:"community", lbl:"Volunteering",         icon:"🤝"},
+  {k:"education", lbl:"Education",            icon:"📚"},
+  {k:"cultural & international",lbl:"Cultural & International",icon:"🌍"},
+  {k:"gaming",    lbl:"Gaming",               icon:"🎮"},
+  {k:"lgbtqia+",  lbl:"LGBTQIA+",             icon:"🏳️‍🌈"},
+  {k:"health",    lbl:"Health Science",       icon:"🏥"},
+  {k:"science",   lbl:"Science",              icon:"🔬"},
+  {k:"design",    lbl:"Design",               icon:"✏️"},
+  {k:"media",     lbl:"Media",                icon:"📸"},
+  {k:"religious", lbl:"Religious",            icon:"🙏"},
+  {k:"recreation",lbl:"Recreation",           icon:"🎯"},
+  {k:"fandom",    lbl:"Fandom",               icon:"⭐"},
+  {k:"mentoring", lbl:"Mentoring",            icon:"🤲"},
+  {k:"engineering",lbl:"Engineering",         icon:"⚙️"},
+];
+
+// From savedEvents.js structure
+const EVENTS_BY_DATE = {
+  "2026-03-05":[{org:"Coding Club",name:"Git & Version Control Workshop",time:"5",p:"PM"}],
+  "2026-03-07":[{org:"Coding Club",name:"React Basics Workshop",time:"5",p:"PM"}],
+  "2026-03-08":[{org:"Mean Green Fitness Club",name:"5K Fun Run",time:"8",p:"AM"}],
+  "2026-03-09":[{org:"Volunteer Club",name:"Food Drive",time:"10",p:"AM"}],
+  "2026-03-12":[{org:"Math Club",name:"Integration Bee",time:"4",p:"PM"},{org:"UNT Art Society",name:"Painting Session",time:"6",p:"PM"}],
+  "2026-03-14":[{org:"Music Society",name:"Open Mic Night",time:"7",p:"PM"}],
+  "2026-03-15":[{org:"Mean Green Fitness Club",name:"HIIT Workshop",time:"6",p:"AM"}],
+  "2026-03-16":[{org:"International Students Assoc.",name:"Language Exchange",time:"5",p:"PM"}],
+  "2026-03-18":[{org:"Pre-Law Society",name:"Mock Trial",time:"5",p:"PM"}],
+  "2026-03-20":[{org:"UNT Gaming Club",name:"Smash Bros Tournament",time:"7",p:"PM"}],
+  "2026-03-21":[{org:"UNT Art Society",name:"Spring Gallery Opening",time:"5",p:"PM"}],
+  "2026-03-22":[{org:"Volunteer Club",name:"Tutoring Expo",time:"2",p:"PM"}],
+  "2026-03-23":[{org:"Coding Club",name:"Hackathon Kickoff",time:"9",p:"AM"},{org:"Math Club",name:"Study Session",time:"4",p:"PM"}],
+  "2026-03-25":[{org:"UNT LGBTQIA+ Alliance",name:"Pride Mixer",time:"6",p:"PM"}],
+  "2026-03-28":[{org:"UNT Art Society",name:"Life Drawing Session",time:"6",p:"PM"}],
+};
+
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DOWS   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+// ══ STATE ══
+let activeGenre = "all";
+let selectedGenres = new Set();
+let saved = new Set();
+let loggedIn = false;
+let user = {name:"",email:""};
+let classes = [];
+let calY = 2026, calM = 2;
+let selDate = null;
+let prevView = "explore";
+let curView  = "home";
+
+// ══ ROUTING ══
+function go(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  const el = document.getElementById("view-"+id);
+  if(el) el.classList.add("active");
+  if(id!=="detail") prevView = curView;
+  curView = id;
+  if(id==="explore")  { initPills(); renderClubs(); }
+  if(id==="calendar") renderCal();
+  if(id==="genre")    initGenreGrid();
+  if(id==="profile")  renderProfile();
+}
+function na(id){
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById(id)?.classList.add("active");
+}
+function goBack(){ go(prevView); }
+function gotoProfile(){
+  if(!loggedIn){ go("login"); return; }
+  go("profile"); na("nb-profile");
+}
+
+// ══ EXPLORE PILLS ══
+function initPills(){
+  const genres = ["All","Technology","Music","Community","Art","Sports","Education","Cultural & International","Gaming","LGBTQIA+","Business"];
+  document.getElementById("explore-pills").innerHTML = genres.map(g=>{
+    const k = g.toLowerCase();
+    return `<div class="pill ${activeGenre===k?"on":""}" onclick="selGenre('${k}','${g}')">${g}</div>`;
+  }).join("");
+}
+function selGenre(k,lbl){
+  activeGenre = k==="all"?"all":k;
+  initPills(); renderClubs();
+}
+function clearFilters(){
+  activeGenre="all";
+  document.getElementById("day-filter").value="";
+  initPills(); renderClubs();
+}
+
+// ══ CLUBS GRID ══
+function renderClubs(q=""){
+  const day = document.getElementById("day-filter")?.value||"";
+  let list = CLUBS.filter(c=>{
+    const gm = activeGenre==="all"||c.category===activeGenre||c.category.includes(activeGenre);
+    const dm = !day||c.day===day;
+    const qm = !q||c.name.toLowerCase().includes(q)||c.category.toLowerCase().includes(q)||c.desc.toLowerCase().includes(q);
+    return gm&&dm&&qm;
+  });
+  document.getElementById("result-ct").textContent = list.length+" clubs found";
+  const g = document.getElementById("clubs-grid");
+  if(!list.length){
+    g.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><div class="empty-t">No clubs found</div><p>Try a different filter</p></div>`;
+    return;
+  }
+  g.innerHTML = list.map(c=>clubCard(c)).join("");
+}
+
+function clubCard(c){
+  return `<div class="club-card" onclick="openClub(${c.id})">
+    <div class="cc-accent" style="background:${c.color};filter:saturate(1.5)brightness(.7)"></div>
+    <div class="cc-body">
+      <div class="cc-top">
+        <div class="cc-icon" style="background:${c.color}">${c.emoji}</div>
+        <button class="cc-star ${saved.has(c.id)?"on":""}" onclick="toggleSave(event,${c.id})">${saved.has(c.id)?"★":"☆"}</button>
+      </div>
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-genre">${c.category.charAt(0).toUpperCase()+c.category.slice(1)}</div>
+      <div class="cc-desc">${c.desc}</div>
+      <div class="cc-foot">
+        <span class="cc-meta">📅 ${c.day}s · ${c.time}</span>
+        <span class="cc-meta">👤 ${c.members}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleSave(e,id){
+  e.stopPropagation();
+  if(!loggedIn){ go("login"); return; }
+  saved.has(id)?saved.delete(id):saved.add(id);
+  toast(saved.has(id)?"Club saved ★":"Club removed");
+  renderClubs();
+}
+
+// ══ GENRE SEARCH (from genre_search.html) ══
+function initGenreGrid(){
+  document.getElementById("genre-grid").innerHTML = GENRES.filter(g=>g.k!=="all").map(g=>
+    `<div class="genre-tile ${selectedGenres.has(g.k)?"on":""}" onclick="toggleGenre('${g.k}')">
+      <div class="gt-icon">${g.icon}</div>
+      <div class="gt-name">${g.lbl}</div>
+    </div>`
+  ).join("");
+  document.getElementById("genre-results").style.display="none";
+}
+function toggleGenre(k){
+  selectedGenres.has(k)?selectedGenres.delete(k):selectedGenres.add(k);
+  initGenreGrid();
+}
+function applyGenres(){
+  const res = document.getElementById("genre-results");
+  if(!selectedGenres.size){ toast("Please select at least one genre"); return; }
+  const list = CLUBS.filter(c=>[...selectedGenres].some(g=>c.category.includes(g)));
+  if(!list.length){
+    res.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><div class="empty-t">No clubs found</div><p>Try different genres</p></div>`;
+  } else {
+    res.innerHTML = list.map(c=>clubCard(c)).join("");
+  }
+  res.style.display="grid";
+}
+function skipGenres(){
+  selectedGenres.clear();
+  const res = document.getElementById("genre-results");
+  res.innerHTML = CLUBS.map(c=>clubCard(c)).join("");
+  res.style.display="grid";
+  initGenreGrid();
+}
+
+// ══ GLOBAL SEARCH ══
+function gsearch(q){
+  if(curView!=="explore"){ go("explore"); na("nb-explore"); }
+  renderClubs(q.toLowerCase());
+}
+
+// ══ CLUB DETAIL ══
+function openClub(id){
+  const c = CLUBS[id];
+  if(!c) return;
+  prevView = curView==="detail"?prevView:curView;
+  document.getElementById("detail-body").innerHTML=`
+    <div class="detail-top">
+      <div class="detail-icon" style="background:${c.color}">${c.emoji}</div>
+      <div style="flex:1">
+        <div class="detail-name">${c.name}</div>
+        <div class="detail-genre">${c.category.charAt(0).toUpperCase()+c.category.slice(1)}</div>
+      </div>
+      <button class="btn-primary" onclick="toggleSave(event,${c.id})">${saved.has(c.id)?"★ Saved":"☆ Save Club"}</button>
+    </div>
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab(this,'tp-about')">About</button>
+      <button class="tab" onclick="switchTab(this,'tp-events')">Events</button>
+      <button class="tab" onclick="switchTab(this,'tp-officers')">Officers</button>
+    </div>
+    <div class="tab-panel on" id="tp-about">
+      <div class="info-card">
+        <h3>About</h3>
+        <p style="color:var(--text-mid);line-height:1.7;font-size:.93rem">${c.desc}</p>
+        <div class="chips-row">
+          <span class="info-chip">📅 ${c.day}s</span>
+          <span class="info-chip">🕐 ${c.time}</span>
+          <span class="info-chip">📍 ${c.location}</span>
+          <span class="info-chip">👤 ${c.members} members</span>
+        </div>
+      </div>
+    </div>
+    <div class="tab-panel" id="tp-events">
+      <div class="info-card">
+        <h3>Upcoming Events</h3>
+        ${c.events.map(ev=>`<div class="ev-row"><div class="ev-row-title">${ev}</div><div class="ev-row-meta">Organized by ${c.name}</div></div>`).join("")}
+      </div>
+    </div>
+    <div class="tab-panel" id="tp-officers">
+      <div class="info-card">
+        <h3>Officers</h3>
+        <div class="officer-list">
+          ${c.officers.map(o=>`<div class="officer-row"><div class="o-av" style="background:${c.color}">${o.n[0]}</div><div><div class="o-name">${o.n}</div><div class="o-role">${o.r}</div></div></div>`).join("")}
+        </div>
+      </div>
+    </div>`;
+  go("detail");
+}
+function switchTab(btn,id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
+  btn.classList.add("on");
+  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("on"));
+  document.getElementById(id)?.classList.add("on");
+}
+
+// ══ CALENDAR ══
+function cm(d){ calM+=d; if(calM>11){calM=0;calY++;} if(calM<0){calM=11;calY--;} renderCal(); }
+function renderCal(){
+  document.getElementById("cal-lbl").textContent=`${MONTHS[calM]} ${calY}`;
+  const today=new Date(), fd=new Date(calY,calM,1).getDay(), dim=new Date(calY,calM+1,0).getDate(), dip=new Date(calY,calM,0).getDate();
+  let h=DOWS.map(d=>`<div class="cal-dlbl">${d}</div>`).join("");
+  for(let i=fd-1;i>=0;i--) h+=`<div class="cal-day dim">${dip-i}</div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${calY}-${String(calM+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const iT=today.getFullYear()===calY&&today.getMonth()===calM&&today.getDate()===d;
+    const iS=selDate===ds, hE=!!EVENTS_BY_DATE[ds];
+    h+=`<div class="cal-day ${iT?"today":""} ${iS?"sel":""} ${hE?"has-ev":""}" onclick="pickDay('${ds}')">${d}</div>`;
+  }
+  const rem=(fd+dim)%7===0?0:7-(fd+dim)%7;
+  for(let d=1;d<=rem;d++) h+=`<div class="cal-day dim">${d}</div>`;
+  document.getElementById("cal-grid").innerHTML=h;
+  if(selDate) renderSidebar(selDate);
+}
+function pickDay(ds){ selDate=ds; renderCal(); }
+function renderSidebar(ds){
+  const [y,m,d]=ds.split("-").map(Number);
+  document.getElementById("sb-title").textContent=`${MONTHS[m-1]} ${d}, ${y}`;
+  const evs=EVENTS_BY_DATE[ds]||[];
+  const dow=new Date(y,m-1,d).getDay();
+  const dayMap={0:"SU",1:"M",2:"TU",3:"W",4:"TH",5:"F",6:"SA"};
+  let h="";
+  classes.filter(cl=>cl.days.toUpperCase().includes(dayMap[dow])).forEach(cl=>{
+    h+=`<div class="ev-item"><div class="ev-time"><div class="ev-h">📚</div><div class="ev-p">Class</div></div><div><div class="ev-name">${cl.name}</div><div class="ev-org">${cl.time}</div></div></div>`;
+  });
+  evs.forEach(ev=>{
+    h+=`<div class="ev-item"><div class="ev-time"><div class="ev-h">${ev.time}</div><div class="ev-p">${ev.p}</div></div><div><div class="ev-name">${ev.name}</div><div class="ev-org">${ev.org}</div></div></div>`;
+  });
+  if(!h) h=`<p style="color:var(--text-muted);font-size:.87rem;padding:1rem 0">No events on this day.</p>`;
+  document.getElementById("sb-events").innerHTML=h;
+}
+function openAddClass(){ if(!loggedIn){go("login");return;} openModal("class"); }
+function addCls(){
+  const n=document.getElementById("cls-name").value;
+  const d=document.getElementById("cls-days").value;
+  const t=document.getElementById("cls-time").value;
+  if(!n) return;
+  classes.push({name:n,days:d,time:t});
+  closeModal("class");
+  toast(`"${n}" added to calendar`);
+  if(selDate) renderSidebar(selDate);
+}
+
+// ══ PROFILE ══
+function renderProfile(){
+  if(!loggedIn) return;
+  document.getElementById("p-av").textContent=user.name[0].toUpperCase();
+  document.getElementById("p-name").textContent=user.name;
+  document.getElementById("p-email").textContent=user.email;
+  document.getElementById("p-saved-ct").textContent=saved.size;
+  const sl=document.getElementById("p-saved");
+  sl.innerHTML=saved.size?[...saved].map(id=>{const c=CLUBS[id];return`<div class="saved-row" onclick="openClub(${id})"><div class="sr-ico" style="background:${c.color}">${c.emoji}</div><span class="sr-name">${c.name}</span><span class="sr-genre">${c.category}</span></div>`;}).join(""):`<p style="color:var(--text-muted);font-size:.85rem">No saved clubs yet.</p>`;
+  document.getElementById("p-events").innerHTML=`
+    <div class="upe"><div class="upe-t">Hackathon Kickoff</div><div class="upe-m">Coding Club · Mar 23 · 9 AM</div></div>
+    <div class="upe"><div class="upe-t">Spring Gallery Opening</div><div class="upe-m">UNT Art Society · Mar 21 · 5 PM</div></div>
+    <div class="upe"><div class="upe-t">Tutoring Expo</div><div class="upe-m">Volunteer Club · Mar 22 · 2 PM</div></div>`;
+}
+
+// ══ AUTH — from login.js logic ══
+function doLogin(){
+  const email=document.getElementById("l-email").value;
+  const pass=document.getElementById("l-pass").value;
+  const err=document.getElementById("login-err");
+  // Mirrors login.js: email must end with @unt.edu
+  if(!email.endsWith("@unt.edu")){ err.style.display="block"; return; }
+  if(!pass){ err.textContent="Please enter your password."; err.style.display="block"; return; }
+  err.style.display="none";
+  loggedIn=true;
+  const namePart=email.split("@")[0];
+  user={name:namePart.replace(/\d/g,"").replace(/\b\w/g,c=>c.toUpperCase())||"Student",email};
+  updateAuthUI();
+  go("home"); na("nb-home");
+  toast(`Welcome back, ${user.name}! 👋`);
+}
+function doSignup(){
+  const name=document.getElementById("s-name").value||"Student";
+  const email=document.getElementById("s-email").value;
+  const pass=document.getElementById("s-pass").value;
+  const conf=document.getElementById("s-conf").value;
+  const err=document.getElementById("signup-err");
+  const err2=document.getElementById("signup-err2");
+  // Mirrors login.js: email must end with @unt.edu
+  if(!email.endsWith("@unt.edu")){ err.style.display="block"; return; }
+  err.style.display="none";
+  if(pass!==conf){ err2.style.display="block"; return; }
+  err2.style.display="none";
+  loggedIn=true;
+  user={name,email};
+  updateAuthUI();
+  go("home"); na("nb-home");
+  toast(`Welcome to Campus Involvement, ${name}! 🌿`);
+}
+function updateAuthUI(){
+  document.getElementById("nav-login-btn").style.display="none";
+  const nu=document.getElementById("nav-user");
+  nu.style.display="flex";
+  document.getElementById("nav-av").textContent=user.name[0].toUpperCase();
+  document.getElementById("nav-uname").textContent=user.name;
+}
+
+// ══ MODAL ══
+function openModal(id){ document.getElementById("modal-"+id).classList.add("open"); }
+function closeModal(id){ document.getElementById("modal-"+id).classList.remove("open"); }
+document.getElementById("modal-class").addEventListener("click",function(e){ if(e.target===this) closeModal("class"); });
+
+// ══ TOAST ══
+function toast(msg){
+  document.getElementById("toast-txt").textContent=msg;
+  const t=document.getElementById("toast");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+// ══ INIT ══
+initPills();
+renderClubs();
+renderCal();
+pickDay("2026-03-23");
+na("nb-home");
+</script>
+</body>
+</html>
