@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>UNT Campus Involvement - Login / Sign Up</title>
+</head>
+
+<body>
+
+    <h1>UNT Campus Involvement</h1>
+    <p>Discover clubs, orgs, and events at the University of North Texas</p>
+
+    <hr>
+
+    <!-- LOGIN FORM -->
+    <h2>Log In</h2>
+    <form action="dashboard.html" method="post">
+
+        <label for="login-email">UNT Email Address:</label><br>
+        <input type="email" id="login-email" name="email" placeholder="abc1234@my.unt.edu" required><br><br>
+
+        <label for="login-password">Password:</label><br>
+        <input type="password" id="login-password" name="password" placeholder="Enter your password" required><br><br>
+
+        <input type="submit" value="Log In">
+
+    </form>
+
+    <p>Don't have an account? <a href="#signup">Sign Up Below</a></p>
+    <p><a href="index.html">Continue as Guest</a></p>
+
+    <hr>
+
+    <!-- SIGNUP FORM -->
+    <h2 id="signup">Sign Up</h2>
+    <form action="dashboard.html" method="post">
+
+        <label for="signup-name">Full Name:</label><br>
+        <input type="text" id="signup-name" name="name" placeholder="Jane Eagle" required><br><br>
+
+        <label for="signup-email">UNT Email Address:</label><br>
+        <input type="email" id="signup-email" name="email" placeholder="abc1234@my.unt.edu" required><br><br>
+
+        <label for="signup-password">Password:</label><br>
+        <input type="password" id="signup-password" name="password" placeholder="Minimum 8 characters" minlength="8"
+            required><br><br>
+
+        <label for="signup-confirm">Confirm Password:</label><br>
+        <input type="password" id="signup-confirm" name="confirm_password" placeholder="Re-enter your password"
+            minlength="8" required><br><br>
+
+        <input type="submit" value="Create Account">
+
+    </form>
+
+    <p>Already have an account? <a href="#top">Log In Above</a></p>
+    <p><a href="index.html">Continue as Guest</a></p>
+
+</body>
+
+</html>
