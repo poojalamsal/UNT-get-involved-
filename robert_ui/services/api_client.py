@@ -10,19 +10,15 @@ I’m doing it this way so:
 import os
 import requests
 
-# NEEDS FROM IFUNAYA:
-# confirm where the backend is running (port + base path)
-API_BASE = os.getenv("API_BASE", "http://localhost:5000/api")
+# Backend is Node/Express on port 3000 (server.js). No "/api" prefix.
+API_BASE = os.getenv("API_BASE", "http://localhost:3000")
 
 def _auth_headers():
     """
     OPTIONAL (Aashi):
-    If join/search endpoints require login, we’ll attach auth here.
+    If endpoints require login later, attach auth here.
     For now, it returns an empty dict so the calls still work in dev.
     """
-    # Example if token-based:
-    # token = os.getenv("AUTH_TOKEN", "")
-    # return {"Authorization": f"Bearer {token}"} if token else {}
     return {}
 
 def _raise_for_status(resp: requests.Response):
@@ -39,50 +35,34 @@ def _raise_for_status(resp: requests.Response):
             raise Exception(data.get("message") or str(data))
         raise
 
-def get_clubs(search: str = "", category: str = ""):
+def get_clubs(category: str = ""):
     """
-    Backend call:
-    GET /api/clubs?search=...&category=...
+    Backend call (CURRENTLY IMPLEMENTED):
+    GET /clubs/search?category=...
     Returns a list of clubs (JSON).
     """
     resp = requests.get(
-        f"{API_BASE}/clubs",
-        params={"search": search, "category": category},
+        f"{API_BASE}/clubs/search",
+        params={"category": category},
         headers=_auth_headers(),
         timeout=10
     )
     _raise_for_status(resp)
     return resp.json()
+
+# -------------------------------------------------------------------
+# PLACEHOLDERS (not implemented in the Node backend yet)
+# These will be completed once routes exist in backend (Ifunaya/team).
+# -------------------------------------------------------------------
 
 def get_club_by_id(club_id: int):
     """
-    Backend call:
-    GET /api/clubs/<id>
-    Returns one club object (JSON).
+    TODO: Needs backend endpoint GET /clubs/<id>
     """
-    resp = requests.get(
-        f"{API_BASE}/clubs/{club_id}",
-        headers=_auth_headers(),
-        timeout=10
-    )
-    _raise_for_status(resp)
-    return resp.json()
+    raise NotImplementedError("Backend does not support GET /clubs/<id> yet.")
 
 def create_join_request(club_id: int, message: str = ""):
     """
-    Backend call:
-    POST /api/clubs/<id>/join-requests
-
-    NEEDS FROM IFUNAYA:
-    confirm the exact request body fields (for now: {"message": ...})
+    TODO: Needs backend endpoint POST /clubs/<id>/join-requests
     """
-    payload = {"message": message}
-
-    resp = requests.post(
-        f"{API_BASE}/clubs/{club_id}/join-requests",
-        json=payload,
-        headers=_auth_headers(),
-        timeout=10
-    )
-    _raise_for_status(resp)
-    return resp.json()
+    raise NotImplementedError("Backend does not support join requests yet.")
