@@ -28,10 +28,42 @@
 
         <hr>
         
-        <!--Lists Up Saved Clubs Here-->
-        <section>
-            <!--Access back end-->
-        </section>
+        <!--ID-->
+        <section id="saved-clubs-container"></section>
+
+        <!-- script to connect savedEvents.js HERE-->
+        <script>
+            document.addEventListener("DOMContentLoaded", async () => {
+                const container = document.getElementById("saved-clubs-container");
+
+                try {
+                    const response = await fetch("/saved"); // calls your Express route
+                    const events = await response.json();
+
+                    if (events.length === 0) {
+                        container.innerHTML = "<p>No saved clubs yet.</p>";
+                        return;
+                    }
+
+                    events.forEach(event => {
+                        const div = document.createElement("div");
+
+                        div.innerHTML = `
+                            <h2>${event.name || "Unnamed Event"}</h2>
+                            <p>${event.description || ""}</p>
+                            <p><strong>Date:</strong> ${event.date || "N/A"}</p>
+                        `;
+
+                        container.appendChild(div);
+                    });
+
+                } catch (err) {
+                    container.innerHTML = "<p>Error loading saved clubs.</p>";
+                    console.error(err);
+                }
+            });
+    </script>
+
 
 
     </body>
