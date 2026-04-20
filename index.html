@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNT Get Involved — Campus Clubs & Organizations</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* ---- Hero ---- */
+    .hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, #00a84f 100%);
+      color: var(--white);
+      padding: 80px 24px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      color: var(--white);
+      max-width: 700px;
+      margin-bottom: 20px;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+    }
+    .hero h1 .accent { color: var(--gold); }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.85);
+      max-width: 560px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-btn-primary {
+      background: var(--white);
+      color: var(--green-dark);
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: all var(--transition);
+      border: none;
+    }
+    .hero-btn-primary:hover { background: var(--gold); color: var(--white); transform: translateY(-2px); }
+    .hero-btn-secondary {
+      background: rgba(255,255,255,0.15);
+      color: var(--white);
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 1rem;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      transition: all var(--transition);
+    }
+    .hero-btn-secondary:hover { background: rgba(255,255,255,0.25); }
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 56px;
+      flex-wrap: wrap;
+    }
+    .stat { }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+
+    /* ---- How it works ---- */
+    .how-section {
+      padding: 72px 24px;
+      background: var(--white);
+    }
+    .how-inner { max-width: 1200px; margin: 0 auto; }
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .how-card {
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      background: var(--gray-50);
+      border: 1.5px solid var(--gray-200);
+      text-align: center;
+      transition: all var(--transition);
+    }
+    .how-card:hover { border-color: var(--green-mid); transform: translateY(-3px); }
+    .how-icon {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .how-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .how-card p { font-size: 0.9rem; }
+
+    /* ---- Featured clubs ---- */
+    .featured-section {
+      padding: 72px 24px;
+      background: var(--gray-50);
+    }
+    .featured-inner { max-width: 1200px; margin: 0 auto; }
+    .featured-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .view-all-link {
+      color: var(--green);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: underline;
+    }
+
+    /* ---- CTA ---- */
+    .cta-section {
+      background: var(--green-dark);
+      color: var(--white);
+      padding: 72px 24px;
+      text-align: center;
+    }
+    .cta-section h2 { color: var(--white); margin-bottom: 16px; }
+    .cta-section p { color: rgba(255,255,255,0.8); max-width: 480px; margin: 0 auto 32px; font-size: 1.05rem; }
+    .cta-btn {
+      display: inline-block;
+      background: var(--white);
+      color: var(--green-dark);
+      padding: 14px 32px;
+      border-radius: var(--radius);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: all var(--transition);
+      border: none;
+    }
+    .cta-btn:hover { background: var(--gold); color: var(--white); }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">🦅 University of North Texas</div>
+      <h1>Find Your Place<br>at <span class="accent">UNT</span></h1>
+      <p class="hero-sub">Discover clubs, organizations, and events happening on campus — all in one place. Get involved, make friends, and build your college experience.</p>
+      <div class="hero-actions">
+        <a href="pages/explore.html" class="hero-btn-primary">Explore Clubs →</a>
+        <a href="pages/calendar.html" class="hero-btn-secondary">View Events Calendar</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">16+</div><div class="stat-label">Clubs & Orgs</div></div>
+        <div class="stat"><div class="stat-num">12+</div><div class="stat-label">Upcoming Events</div></div>
+        <div class="stat"><div class="stat-num">8</div><div class="stat-label">Interest Categories</div></div>
+        <div class="stat"><div class="stat-num">Free</div><div class="stat-label">To Join</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how-section">
+    <div class="how-inner">
+      <div class="section-heading">
+        <h2>How It Works</h2>
+        <p>Three easy ways to find the clubs that match your interests</p>
+      </div>
+      <div class="how-grid">
+        <div class="how-card">
+          <span class="how-icon">🔍</span>
+          <h3>Search by Interest</h3>
+          <p>Browse clubs by category — technology, arts, sports, service, and more. Filter to find exactly what you're looking for.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-icon">📅</span>
+          <h3>Browse the Calendar</h3>
+          <p>See upcoming events and meetings across all campus organizations on a single, easy-to-navigate calendar view.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-icon">🔖</span>
+          <h3>Save & Track</h3>
+          <p>Create a free account with your UNT email to save clubs, add class schedules, and manage your personal calendar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Clubs -->
+  <section class="featured-section">
+    <div class="featured-inner">
+      <div class="featured-header">
+        <div>
+          <h2>Popular Clubs</h2>
+          <p>Some of the most active organizations on campus</p>
+        </div>
+        <a href="pages/explore.html" class="view-all-link">View all clubs →</a>
+      </div>
+      <div class="clubs-grid" id="featured-grid"></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>Ready to Get Involved?</h2>
+    <p>Sign up with your UNT email to save clubs, get event reminders, and build your campus profile.</p>
+    <a href="pages/loginsignup.html" class="cta-btn">Create Your Account →</a>
+  </section>
+
+  <footer class="footer">
+    <p>UNT Get Involved — University of North Texas &nbsp;|&nbsp; <a href="mailto:studentorgs@unt.edu">studentorgs@unt.edu</a></p>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script>
+    // Render nav
+    document.getElementById('nav-placeholder').innerHTML = `
+      <nav class="nav">
+        <div class="nav-inner">
+          <a href="index.html" class="nav-logo"><span class="logo-icon">🦅</span><span>UNT Get Involved</span></a>
+          <div class="nav-links" id="nav-links">
+            <a href="pages/explore.html">Explore</a>
+            <a href="pages/calendar.html">Calendar</a>
+            <span id="nav-auth-slot"></span>
+          </div>
+          <button class="nav-hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
+        </div>
+      </nav>`;
+    const user = Auth.getUser();
+    const authSlot = document.getElementById('nav-auth-slot');
+    if (user) {
+      authSlot.innerHTML = `<a href="pages/profile.html">My Clubs</a><button class="btn-logout" onclick="Auth.logout();location.reload()">Logout</button>`;
+    } else {
+      authSlot.innerHTML = `<a href="pages/loginsignup.html" class="btn-signin">Sign In</a>`;
+    }
+
+    // Featured clubs (top 6 by member count)
+    const featured = [...CLUBS].sort((a,b) => b.members - a.members).slice(0,6);
+    const grid = document.getElementById('featured-grid');
+    grid.innerHTML = featured.map(club => `
+      <div class="club-card" onclick="openModal(${club.id})">
+        <div class="club-card-header">
+          <div class="club-card-title">${club.name}</div>
+          <button class="club-save-btn ${Saved.isSaved(club.id)?'saved':''}" onclick="event.stopPropagation();toggleSave(${club.id},this)">${Saved.isSaved(club.id)?'🔖':'🏷️'}</button>
+        </div>
+        <span class="club-category-badge">${club.category}</span>
+        <p>${club.description}</p>
+        <div class="club-meta">
+          <span>🕐 ${club.meeting}</span>
+          <span>📍 ${club.location}</span>
+        </div>
+        <div class="club-footer">
+          <span class="member-count">👥 ${club.members} members</span>
+          <button class="btn-view" onclick="event.stopPropagation();openModal(${club.id})">Details</button>
+        </div>
+      </div>`).join('');
+
+    function toggleSave(id, btn) {
+      if (!Auth.isLoggedIn()) { showToast('Sign in to save clubs!'); return; }
+      const saved = Saved.toggle(id);
+      btn.textContent = saved ? '🔖' : '🏷️';
+      btn.classList.toggle('saved', saved);
+      showToast(saved ? 'Club saved!' : 'Club removed.');
+    }
+
+    function openModal(id) {
+      const club = CLUBS.find(c => c.id === id);
+      const events = EVENTS.filter(e => e.clubId === id);
+      const saved = Saved.isSaved(id);
+      document.getElementById('modal-content').innerHTML = `
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h3>${club.name}</h3>
+        <div class="modal-badge"><span class="club-category-badge">${club.category}</span></div>
+        <p class="modal-desc">${club.description}</p>
+        <div class="modal-info-grid">
+          <div class="modal-info-item"><label>Meeting Time</label><span>${club.meeting}</span></div>
+          <div class="modal-info-item"><label>Location</label><span>${club.location}</span></div>
+          <div class="modal-info-item"><label>Members</label><span>${club.members} students</span></div>
+          <div class="modal-info-item"><label>Contact</label><span>${club.email}</span></div>
+        </div>
+        ${events.length ? `<div class="modal-events"><h4>Upcoming Events</h4>${events.map(e=>`<div class="modal-event-item"><div class="event-title">${e.title}</div><div class="event-meta">📅 ${e.date} · ⏰ ${e.time} · 📍 ${e.location}</div></div>`).join('')}</div>` : ''}
+        <div class="modal-actions">
+          <button class="btn-save-modal ${saved?'saved':''}" id="modal-save-btn" onclick="toggleSaveModal(${id})">${saved?'✓ Saved':'🔖 Save Club'}</button>
+          <a href="mailto:${club.email}" class="btn-email-modal">✉ Contact</a>
+        </div>`;
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+    document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+
+    function toggleSaveModal(id) {
+      if (!Auth.isLoggedIn()) { showToast('Sign in to save clubs!'); return; }
+      const saved = Saved.toggle(id);
+      const btn = document.getElementById('modal-save-btn');
+      btn.textContent = saved ? '✓ Saved' : '🔖 Save Club';
+      btn.classList.toggle('saved', saved);
+      showToast(saved ? 'Club saved to your profile!' : 'Club removed from saved.');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
