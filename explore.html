@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore Clubs — UNT Get Involved</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .page-header {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+      color: var(--white);
+      padding: 48px 24px;
+    }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; }
+    .page-header h1 { color: var(--white); font-size: 2.2rem; margin-bottom: 8px; }
+    .page-header p { color: rgba(255,255,255,0.85); font-size: 1rem; }
+
+    /* Interest picker (shown first time) */
+    .interest-picker {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--green-mid);
+      padding: 28px;
+      margin-bottom: 32px;
+    }
+    .interest-picker h3 { font-size: 1.1rem; margin-bottom: 6px; }
+    .interest-picker p { font-size: 0.9rem; margin-bottom: 16px; }
+    .interest-picker-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-skip { background: none; color: var(--gray-400); font-size: 0.88rem; text-decoration: underline; }
+    .btn-apply {
+      background: var(--green);
+      color: var(--white);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background var(--transition);
+    }
+    .btn-apply:hover { background: var(--green-dark); }
+
+    .layout { display: flex; gap: 28px; align-items: flex-start; }
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--gray-200);
+      padding: 20px;
+      position: sticky;
+      top: 88px;
+    }
+    .sidebar h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray-400);
+      margin-bottom: 12px;
+    }
+    .sidebar-links { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-link {
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: none;
+      border: none;
+      text-align: left;
+      width: 100%;
+    }
+    .sidebar-link:hover { background: var(--green-light); color: var(--green-dark); }
+    .sidebar-link.active { background: var(--green); color: var(--white); }
+    .sidebar-count {
+      background: rgba(255,255,255,0.25);
+      border-radius: 10px;
+      padding: 1px 7px;
+      font-size: 0.75rem;
+    }
+    .sidebar-link:not(.active) .sidebar-count { background: var(--gray-100); color: var(--gray-400); }
+    .main-content { flex: 1; min-width: 0; }
+    @media (max-width: 768px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1>Explore Clubs & Orgs</h1>
+      <p>Search, filter by category, and find your perfect campus community</p>
+    </div>
+  </div>
+
+  <div class="page-wrapper">
+    <!-- Interest picker -->
+    <div class="interest-picker" id="interest-picker">
+      <h3>✨ What are you interested in?</h3>
+      <p>Select one or more categories to get personalized club recommendations, or skip to see everything.</p>
+      <div class="category-pills" id="interest-pills"></div>
+      <div class="interest-picker-footer">
+        <button class="btn-skip" onclick="skipInterests()">Skip — show me everything</button>
+        <button class="btn-apply" onclick="applyInterests()">Show matching clubs →</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h4>Categories</h4>
+        <div class="sidebar-links" id="sidebar-cats"></div>
+      </aside>
+
+      <!-- Main -->
+      <div class="main-content">
+        <div class="search-bar">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input class="search-input" type="text" id="search-input" placeholder="Search clubs, keywords…" oninput="renderClubs()" />
+          </div>
+          <select class="filter-select" id="day-filter" onchange="renderClubs()">
+            <option value="">Any meeting day</option>
+            <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+            <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+          </select>
+        </div>
+
+        <div class="results-count" id="results-count"></div>
+        <div class="clubs-grid" id="clubs-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>UNT Get Involved — University of North Texas</p>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script>
+    // Nav
+    const _user = Auth.getUser();
+    document.getElementById('nav-placeholder').innerHTML = `
+      <nav class="nav">
+        <div class="nav-inner">
+          <a href="../index.html" class="nav-logo"><span class="logo-icon">🦅</span><span>UNT Get Involved</span></a>
+          <div class="nav-links" id="nav-links">
+            <a href="explore.html" class="active">Explore</a>
+            <a href="calendar.html">Calendar</a>
+            <span id="nav-auth-slot"></span>
+          </div>
+          <button class="nav-hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
+        </div>
+      </nav>`;
+    const slot = document.getElementById('nav-auth-slot');
+    if (_user) {
+      slot.innerHTML = `<a href="profile.html">My Clubs</a><button class="btn-logout" onclick="Auth.logout();location.href='../index.html'">Logout</button>`;
+    } else {
+      slot.innerHTML = `<a href="loginsignup.html" class="btn-signin">Sign In</a>`;
+    }
+
+    let activeCategory = 'All';
+    let interestMode = true;
+    let selectedInterests = new Set();
+
+    // Interest pills
+    const ipDiv = document.getElementById('interest-pills');
+    CATEGORIES.filter(c => c !== 'All').forEach(cat => {
+      const p = document.createElement('button');
+      p.className = 'pill';
+      p.textContent = cat;
+      p.onclick = () => {
+        p.classList.toggle('active');
+        if (selectedInterests.has(cat)) selectedInterests.delete(cat);
+        else selectedInterests.add(cat);
+      };
+      ipDiv.appendChild(p);
+    });
+
+    function skipInterests() {
+      document.getElementById('interest-picker').style.display = 'none';
+      interestMode = false;
+      renderClubs();
+    }
+    function applyInterests() {
+      document.getElementById('interest-picker').style.display = 'none';
+      if (selectedInterests.size > 0) {
+        activeCategory = [...selectedInterests][0];
+      }
+      interestMode = false;
+      renderClubs();
+    }
+
+    // Sidebar categories
+    const sidebarDiv = document.getElementById('sidebar-cats');
+    CATEGORIES.forEach(cat => {
+      const btn = document.createElement('button');
+      const count = cat === 'All' ? CLUBS.length : CLUBS.filter(c => c.category === cat).length;
+      btn.className = `sidebar-link ${cat === activeCategory ? 'active' : ''}`;
+      btn.innerHTML = `${cat} <span class="sidebar-count">${count}</span>`;
+      btn.onclick = () => {
+        activeCategory = cat;
+        document.querySelectorAll('.sidebar-link').forEach((b,i) => b.classList.toggle('active', CATEGORIES[i] === cat));
+        renderClubs();
+      };
+      sidebarDiv.appendChild(btn);
+    });
+
+    function renderClubs() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const day = document.getElementById('day-filter').value;
+
+      let filtered = CLUBS.filter(c => {
+        const matchCat = activeCategory === 'All' || c.category === activeCategory;
+        const matchQuery = !query || c.name.toLowerCase().includes(query) ||
+          c.description.toLowerCase().includes(query) ||
+          c.tags.some(t => t.includes(query)) ||
+          c.category.toLowerCase().includes(query);
+        const matchDay = !day || c.meeting.toLowerCase().includes(day.toLowerCase().slice(0,3));
+        return matchCat && matchQuery && matchDay;
+      });
+
+      document.getElementById('results-count').textContent = `${filtered.length} club${filtered.length !== 1 ? 's' : ''} found`;
+
+      const grid = document.getElementById('clubs-grid');
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="emoji">🔍</div><h3>No clubs found</h3><p>Try a different search term or category.</p></div>`;
+        return;
+      }
+      grid.innerHTML = filtered.map(club => `
+        <div class="club-card" onclick="openModal(${club.id})">
+          <div class="club-card-header">
+            <div class="club-card-title">${club.name}</div>
+            <button class="club-save-btn ${Saved.isSaved(club.id)?'saved':''}" onclick="event.stopPropagation();toggleSave(${club.id},this)">${Saved.isSaved(club.id)?'🔖':'🏷️'}</button>
+          </div>
+          <span class="club-category-badge">${club.category}</span>
+          <p>${club.description}</p>
+          <div class="club-meta">
+            <span>🕐 ${club.meeting}</span>
+            <span>📍 ${club.location}</span>
+          </div>
+          <div class="club-footer">
+            <span class="member-count">👥 ${club.members} members</span>
+            <button class="btn-view">Details</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function toggleSave(id, btn) {
+      if (!Auth.isLoggedIn()) { showToast('Sign in to save clubs!'); return; }
+      const saved = Saved.toggle(id);
+      btn.textContent = saved ? '🔖' : '🏷️';
+      btn.classList.toggle('saved', saved);
+      showToast(saved ? 'Club saved!' : 'Club removed.');
+    }
+
+    function openModal(id) {
+      const club = CLUBS.find(c => c.id === id);
+      const events = EVENTS.filter(e => e.clubId === id);
+      const saved = Saved.isSaved(id);
+      document.getElementById('modal-content').innerHTML = `
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h3>${club.name}</h3>
+        <div class="modal-badge"><span class="club-category-badge">${club.category}</span></div>
+        <p class="modal-desc">${club.description}</p>
+        <div class="modal-info-grid">
+          <div class="modal-info-item"><label>Meeting Time</label><span>${club.meeting}</span></div>
+          <div class="modal-info-item"><label>Location</label><span>${club.location}</span></div>
+          <div class="modal-info-item"><label>Members</label><span>${club.members} students</span></div>
+          <div class="modal-info-item"><label>Contact</label><span>${club.email}</span></div>
+        </div>
+        ${events.length ? `<div class="modal-events"><h4>Upcoming Events</h4>${events.map(e=>`<div class="modal-event-item"><div class="event-title">${e.title}</div><div class="event-meta">📅 ${e.date} · ⏰ ${e.time} · 📍 ${e.location}</div></div>`).join('')}</div>` : ''}
+        <div class="modal-actions">
+          <button class="btn-save-modal ${saved?'saved':''}" id="modal-save-btn" onclick="toggleSaveModal(${id})">${saved?'✓ Saved':'🔖 Save Club'}</button>
+          <a href="mailto:${club.email}" class="btn-email-modal">✉ Contact</a>
+        </div>`;
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+    document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+    function toggleSaveModal(id) {
+      if (!Auth.isLoggedIn()) { showToast('Sign in to save clubs!'); return; }
+      const saved = Saved.toggle(id);
+      const btn = document.getElementById('modal-save-btn');
+      btn.textContent = saved ? '✓ Saved' : '🔖 Save Club';
+      btn.classList.toggle('saved', saved);
+      showToast(saved ? 'Club saved to your profile!' : 'Club removed from saved.');
+    }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // Initial render (hidden until interest picker is dismissed)
+    // Show all clubs initially behind the picker
+    renderClubs();
+  </script>
+</body>
+</html>
