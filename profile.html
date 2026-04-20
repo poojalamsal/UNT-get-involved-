@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — UNT Get Involved</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .profile-header {
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      padding: 48px 24px;
+    }
+    .profile-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .avatar {
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,0.2);
+      border: 3px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+    .profile-info h1 { color: var(--white); font-size: 1.8rem; margin-bottom: 4px; }
+    .profile-email { color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+    .profile-stats {
+      display: flex;
+      gap: 32px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .profile-stat { }
+    .profile-stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .profile-stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.7); }
+
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid var(--gray-200);
+      margin-bottom: 32px;
+      gap: 0;
+      background: var(--white);
+      padding: 0 24px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .tab-btn {
+      padding: 16px 20px;
+      border: none;
+      background: none;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--gray-400);
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all var(--transition);
+    }
+    .tab-btn:hover { color: var(--green); }
+    .tab-btn.active { color: var(--green-dark); border-bottom-color: var(--green); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Saved clubs tab */
+    .saved-empty {
+      text-align: center;
+      padding: 60px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1.5px dashed var(--gray-200);
+    }
+    .saved-empty .emoji { font-size: 3rem; margin-bottom: 16px; }
+    .saved-empty h3 { margin-bottom: 8px; }
+    .saved-empty a { color: var(--green); font-weight: 600; text-decoration: underline; }
+
+    /* Schedule tab */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .schedule-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--gray-200);
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .schedule-card .class-name { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--black); margin-bottom: 4px; }
+    .schedule-card .class-detail { font-size: 0.85rem; color: var(--gray-400); }
+    .btn-remove-class { background: var(--gray-100); border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.78rem; color: var(--gray-400); transition: all var(--transition); }
+    .btn-remove-class:hover { background: #fdecea; color: #c0392b; }
+
+    /* Account tab */
+    .account-section {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--gray-200);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .account-section h3 { font-size: 1.05rem; margin-bottom: 16px; }
+    .account-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 0.92rem;
+    }
+    .account-field:last-child { border-bottom: none; }
+    .account-field label { color: var(--gray-400); font-size: 0.82rem; }
+    .account-field span { font-weight: 500; }
+    .btn-logout-big {
+      background: var(--gray-100);
+      border: 1.5px solid var(--gray-200);
+      color: var(--gray-600);
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all var(--transition);
+    }
+    .btn-logout-big:hover { background: #fdecea; color: #c0392b; border-color: #c0392b; }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <div class="profile-header">
+    <div class="profile-header-inner">
+      <div class="avatar" id="avatar">👤</div>
+      <div class="profile-info">
+        <h1 id="profile-name">Loading…</h1>
+        <div class="profile-email" id="profile-email"></div>
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="saved-count">0</div>
+            <div class="profile-stat-label">Saved Clubs</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="class-count">0</div>
+            <div class="profile-stat-label">Classes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('saved')">🔖 Saved Clubs</button>
+    <button class="tab-btn" onclick="switchTab('schedule')">📚 My Schedule</button>
+    <button class="tab-btn" onclick="switchTab('account')">⚙️ Account</button>
+  </div>
+
+  <div class="page-wrapper" style="padding-top:0">
+    <!-- Saved clubs -->
+    <div class="tab-panel active" id="tab-saved">
+      <div id="saved-grid"></div>
+    </div>
+
+    <!-- Schedule -->
+    <div class="tab-panel" id="tab-schedule">
+      <div class="section-heading">
+        <h2>My Class Schedule</h2>
+        <p>Classes added from the <a href="calendar.html" style="color:var(--green)">Calendar</a> page appear here.</p>
+      </div>
+      <div id="schedule-content"></div>
+    </div>
+
+    <!-- Account -->
+    <div class="tab-panel" id="tab-account">
+      <div class="account-section">
+        <h3>Account Information</h3>
+        <div class="account-field"><label>Email</label><span id="acct-email"></span></div>
+        <div class="account-field"><label>Account Type</label><span>UNT Student</span></div>
+        <div class="account-field"><label>Joined</label><span>Spring 2026</span></div>
+      </div>
+      <button class="btn-logout-big" onclick="Auth.logout();location.href='../index.html'">Sign Out</button>
+    </div>
+  </div>
+
+  <footer class="footer"><p>UNT Get Involved — University of North Texas</p></footer>
+  <div class="toast" id="toast"></div>
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script>
+    // Guard
+    if (!Auth.isLoggedIn()) location.href = 'loginsignup.html';
+
+    const user = Auth.getUser();
+
+    // Nav
+    document.getElementById('nav-placeholder').innerHTML = `
+      <nav class="nav">
+        <div class="nav-inner">
+          <a href="../index.html" class="nav-logo"><span class="logo-icon">🦅</span><span>UNT Get Involved</span></a>
+          <div class="nav-links" id="nav-links">
+            <a href="explore.html">Explore</a>
+            <a href="calendar.html">Calendar</a>
+            <a href="profile.html" class="active">My Clubs</a>
+            <button class="btn-logout" onclick="Auth.logout();location.href='../index.html'">Logout</button>
+          </div>
+          <button class="nav-hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
+        </div>
+      </nav>`;
+
+    // Profile header
+    const displayName = user.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    document.getElementById('profile-name').textContent = `Hi, ${displayName.split(' ')[0]}! 👋`;
+    document.getElementById('profile-email').textContent = user.email;
+    document.getElementById('acct-email').textContent = user.email;
+    document.getElementById('avatar').textContent = displayName.charAt(0).toUpperCase();
+
+    function updateCounts() {
+      const saved = Saved.getAll();
+      const classes = getClasses();
+      document.getElementById('saved-count').textContent = saved.length;
+      document.getElementById('class-count').textContent = classes.length;
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', ['saved','schedule','account'][i] === tab));
+      document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', ['tab-saved','tab-schedule','tab-account'][i] === `tab-${tab}`));
+    }
+
+    function renderSaved() {
+      const savedIds = Saved.getAll();
+      const savedClubs = CLUBS.filter(c => savedIds.includes(c.id));
+      const grid = document.getElementById('saved-grid');
+      if (!savedClubs.length) {
+        grid.innerHTML = `
+          <div class="saved-empty">
+            <div class="emoji">🔖</div>
+            <h3>No saved clubs yet</h3>
+            <p>Browse the <a href="explore.html">Explore</a> page and save clubs you're interested in.</p>
+          </div>`;
+        return;
+      }
+      grid.innerHTML = `<div class="clubs-grid">${savedClubs.map(club => `
+        <div class="club-card" onclick="openModal(${club.id})">
+          <div class="club-card-header">
+            <div class="club-card-title">${club.name}</div>
+            <button class="club-save-btn saved" onclick="event.stopPropagation();unsaveClub(${club.id},this)">🔖</button>
+          </div>
+          <span class="club-category-badge">${club.category}</span>
+          <p>${club.description}</p>
+          <div class="club-meta">
+            <span>🕐 ${club.meeting}</span>
+            <span>📍 ${club.location}</span>
+          </div>
+          <div class="club-footer">
+            <span class="member-count">👥 ${club.members} members</span>
+            <button class="btn-view">Details</button>
+          </div>
+        </div>`).join('')}</div>`;
+    }
+
+    function unsaveClub(id, btn) {
+      Saved.toggle(id);
+      renderSaved();
+      updateCounts();
+      showToast('Club removed from saved.');
+    }
+
+    function getClasses() {
+      try { return JSON.parse(localStorage.getItem('unt_classes')) || []; } catch { return []; }
+    }
+    function saveClasses(cls) { localStorage.setItem('unt_classes', JSON.stringify(cls)); }
+
+    function renderSchedule() {
+      const classes = getClasses();
+      const content = document.getElementById('schedule-content');
+      if (!classes.length) {
+        content.innerHTML = `
+          <div class="saved-empty">
+            <div class="emoji">📚</div>
+            <h3>No classes added yet</h3>
+            <p>Go to the <a href="calendar.html">Calendar</a> page to add your class schedule.</p>
+          </div>`;
+        return;
+      }
+      content.innerHTML = `<div class="schedule-grid">${classes.map((c, i) => `
+        <div class="schedule-card">
+          <div>
+            <div class="class-name">${c.name}</div>
+            <div class="class-detail">${c.days} · ${c.time}</div>
+          </div>
+          <button class="btn-remove-class" onclick="removeClass(${i})">Remove</button>
+        </div>`).join('')}</div>`;
+    }
+
+    function removeClass(index) {
+      const classes = getClasses();
+      classes.splice(index, 1);
+      saveClasses(classes);
+      renderSchedule();
+      updateCounts();
+    }
+
+    function openModal(id) {
+      const club = CLUBS.find(c => c.id === id);
+      const events = EVENTS.filter(e => e.clubId === id);
+      const saved = Saved.isSaved(id);
+      document.getElementById('modal-content').innerHTML = `
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h3>${club.name}</h3>
+        <div class="modal-badge"><span class="club-category-badge">${club.category}</span></div>
+        <p class="modal-desc">${club.description}</p>
+        <div class="modal-info-grid">
+          <div class="modal-info-item"><label>Meeting Time</label><span>${club.meeting}</span></div>
+          <div class="modal-info-item"><label>Location</label><span>${club.location}</span></div>
+          <div class="modal-info-item"><label>Members</label><span>${club.members} students</span></div>
+          <div class="modal-info-item"><label>Contact</label><span>${club.email}</span></div>
+        </div>
+        ${events.length ? `<div class="modal-events"><h4>Upcoming Events</h4>${events.map(e=>`<div class="modal-event-item"><div class="event-title">${e.title}</div><div class="event-meta">📅 ${e.date} · ⏰ ${e.time} · 📍 ${e.location}</div></div>`).join('')}</div>` : ''}
+        <div class="modal-actions">
+          <button class="btn-save-modal ${saved?'saved':''}" id="modal-save-btn" onclick="toggleSaveModal(${id})">${saved?'✓ Saved':'🔖 Save Club'}</button>
+          <a href="mailto:${club.email}" class="btn-email-modal">✉ Contact</a>
+        </div>`;
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+    document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+    function toggleSaveModal(id) {
+      const saved = Saved.toggle(id);
+      const btn = document.getElementById('modal-save-btn');
+      btn.textContent = saved ? '✓ Saved' : '🔖 Save Club';
+      btn.classList.toggle('saved', saved);
+      renderSaved();
+      updateCounts();
+      showToast(saved ? 'Club saved!' : 'Club removed.');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    renderSaved();
+    renderSchedule();
+    updateCounts();
+  </script>
+</body>
+</html>
