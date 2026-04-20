@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events Calendar — UNT Get Involved</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .page-header { background: linear-gradient(135deg, var(--green-dark), var(--green)); color: var(--white); padding: 48px 24px; }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; }
+    .page-header h1 { color: var(--white); font-size: 2.2rem; margin-bottom: 8px; }
+    .page-header p { color: rgba(255,255,255,0.85); }
+
+    .cal-layout { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+    .cal-left { flex: 1; min-width: 300px; }
+    .cal-right { width: 340px; flex-shrink: 0; }
+    @media (max-width: 900px) { .cal-right { width: 100%; } }
+
+    /* Calendar widget */
+    .calendar-widget {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--gray-200);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .cal-header h3 { font-family: 'Syne', sans-serif; font-size: 1.15rem; }
+    .cal-nav-btn {
+      background: var(--gray-100);
+      border: none;
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: var(--gray-600);
+      transition: all var(--transition);
+    }
+    .cal-nav-btn:hover { background: var(--green-light); color: var(--green); }
+    .cal-grid { width: 100%; border-collapse: collapse; }
+    .cal-grid th {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--gray-400);
+      text-align: center;
+      padding: 6px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .cal-day {
+      text-align: center;
+      padding: 4px 2px;
+    }
+    .cal-day-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: none;
+      font-size: 0.9rem;
+      color: var(--gray-800);
+      transition: all var(--transition);
+      position: relative;
+    }
+    .cal-day-btn:hover { background: var(--green-light); color: var(--green); }
+    .cal-day-btn.today { font-weight: 700; color: var(--green); border: 2px solid var(--green); }
+    .cal-day-btn.selected { background: var(--green); color: var(--white) !important; }
+    .cal-day-btn.has-event::after {
+      content: '';
+      display: block;
+      width: 5px; height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .cal-day-btn.selected.has-event::after { background: var(--white); }
+    .cal-day-btn.other-month { color: var(--gray-200); }
+    .cal-day-btn.other-month:hover { background: none; color: var(--gray-200); cursor: default; }
+
+    /* Class schedule section */
+    .schedule-section {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--gray-200);
+      padding: 24px;
+    }
+    .schedule-section h4 { font-family: 'Syne', sans-serif; font-size: 1rem; margin-bottom: 16px; color: var(--black); }
+    .class-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .class-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--green-light);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+    }
+    .class-item .class-name { font-weight: 600; color: var(--green-dark); }
+    .class-item .class-time { color: var(--gray-600); font-size: 0.82rem; }
+    .class-remove { background: none; border: none; color: var(--gray-400); font-size: 1rem; transition: color var(--transition); }
+    .class-remove:hover { color: #c0392b; }
+    .add-class-form { display: flex; flex-direction: column; gap: 10px; }
+    .add-class-row { display: flex; gap: 8px; }
+    .add-class-row .form-input { padding: 10px 12px; font-size: 0.88rem; }
+    .btn-add-class {
+      background: var(--green);
+      color: var(--white);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border: none;
+      white-space: nowrap;
+      transition: background var(--transition);
+    }
+    .btn-add-class:hover { background: var(--green-dark); }
+
+    /* Events list */
+    .events-day-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+    .event-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--gray-200);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      transition: all var(--transition);
+    }
+    .event-card:hover { border-color: var(--green-mid); box-shadow: var(--shadow); }
+    .event-date-block {
+      background: var(--green);
+      color: var(--white);
+      border-radius: 10px;
+      width: 54px;
+      height: 54px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .event-date-block .day-num { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+    .event-date-block .month-short { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+    .event-info h4 { font-size: 1.05rem; color: var(--black); margin-bottom: 4px; }
+    .event-info .event-meta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
+    .event-info .event-meta-item { font-size: 0.82rem; color: var(--gray-400); }
+    .event-info p { font-size: 0.88rem; }
+    .event-club-badge {
+      display: inline-flex;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin-top: 6px;
+    }
+    .all-events-toggle {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .toggle-btn {
+      padding: 9px 18px;
+      border-radius: 8px;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      transition: all var(--transition);
+    }
+    .toggle-btn.active { background: var(--green); border-color: var(--green); color: var(--white); }
+    .toggle-btn:hover:not(.active) { border-color: var(--green); color: var(--green); }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1>Events Calendar</h1>
+      <p>Browse all upcoming club events and manage your class schedule</p>
+    </div>
+  </div>
+
+  <div class="page-wrapper">
+    <div class="cal-layout">
+      <!-- Left: events -->
+      <div class="cal-left">
+        <div class="all-events-toggle">
+          <button class="toggle-btn active" id="btn-all" onclick="setView('all')">All Upcoming Events</button>
+          <button class="toggle-btn" id="btn-day" onclick="setView('day')">Selected Day</button>
+        </div>
+        <div class="events-day-label" id="events-label">All Upcoming Events</div>
+        <div id="events-list"></div>
+      </div>
+
+      <!-- Right: calendar + schedule -->
+      <div class="cal-right">
+        <div class="calendar-widget">
+          <div class="cal-header">
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+            <h3 id="cal-month-label"></h3>
+            <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+          </div>
+          <table class="cal-grid">
+            <thead>
+              <tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr>
+            </thead>
+            <tbody id="cal-body"></tbody>
+          </table>
+        </div>
+
+        <div class="schedule-section">
+          <h4>📚 My Class Schedule</h4>
+          <div id="class-list" class="class-list"></div>
+          <div class="add-class-form" id="class-form-wrap">
+            <input class="form-input" id="class-name" placeholder="Class name (e.g. CSCE 3444)" />
+            <div class="add-class-row">
+              <input class="form-input" id="class-days" placeholder="Days (e.g. MWF)" style="flex:1" />
+              <input class="form-input" id="class-time" placeholder="Time (e.g. 2–3pm)" style="flex:1" />
+            </div>
+            <button class="btn-add-class" onclick="addClass()">+ Add Class</button>
+          </div>
+          <p id="schedule-login-note" style="font-size:0.82rem;color:var(--gray-400);margin-top:8px;display:none">
+            <a href="loginsignup.html" style="color:var(--green);font-weight:600">Sign in</a> to save your class schedule.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><p>UNT Get Involved — University of North Texas</p></footer>
+  <div class="toast" id="toast"></div>
+
+  <script src="../js/data.js"></script>
+  <script>
+    // Nav
+    const _user = Auth.getUser();
+    document.getElementById('nav-placeholder').innerHTML = `
+      <nav class="nav">
+        <div class="nav-inner">
+          <a href="../index.html" class="nav-logo"><span class="logo-icon">🦅</span><span>UNT Get Involved</span></a>
+          <div class="nav-links" id="nav-links">
+            <a href="explore.html">Explore</a>
+            <a href="calendar.html" class="active">Calendar</a>
+            <span id="nav-auth-slot"></span>
+          </div>
+          <button class="nav-hamburger" onclick="document.getElementById('nav-links').classList.toggle('open')">☰</button>
+        </div>
+      </nav>`;
+    const slot = document.getElementById('nav-auth-slot');
+    if (_user) {
+      slot.innerHTML = `<a href="profile.html">My Clubs</a><button class="btn-logout" onclick="Auth.logout();location.href='../index.html'">Logout</button>`;
+    } else {
+      slot.innerHTML = `<a href="loginsignup.html" class="btn-signin">Sign In</a>`;
+    }
+
+    let currentDate = new Date();
+    let selectedDate = null;
+    let viewMode = 'all';
+
+    function setView(mode) {
+      viewMode = mode;
+      document.getElementById('btn-all').classList.toggle('active', mode === 'all');
+      document.getElementById('btn-day').classList.toggle('active', mode === 'day');
+      renderEvents();
+    }
+
+    function changeMonth(delta) {
+      currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta, 1);
+      renderCalendar();
+    }
+
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      document.getElementById('cal-month-label').textContent = `${MONTHS[month]} ${year}`;
+
+      const today = new Date();
+      const eventDates = new Set(EVENTS.map(e => e.date));
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrev = new Date(year, month, 0).getDate();
+
+      let html = '';
+      let day = 1;
+      let nextDay = 1;
+
+      for (let row = 0; row < 6; row++) {
+        if (day > daysInMonth && row > 3) break;
+        html += '<tr>';
+        for (let col = 0; col < 7; col++) {
+          const cellNum = row * 7 + col;
+          let dateStr = '';
+          let dayNum = '';
+          let cls = 'cal-day-btn';
+
+          if (cellNum < firstDay) {
+            dayNum = daysInPrev - firstDay + cellNum + 1;
+            cls += ' other-month';
+          } else if (day > daysInMonth) {
+            dayNum = nextDay++;
+            cls += ' other-month';
+          } else {
+            dayNum = day;
+            dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) cls += ' today';
+            if (selectedDate === dateStr) cls += ' selected';
+            if (eventDates.has(dateStr)) cls += ' has-event';
+            day++;
+          }
+
+          const clickAttr = dateStr ? `onclick="selectDate('${dateStr}')"` : '';
+          html += `<td class="cal-day"><button class="${cls}" ${clickAttr}>${dayNum}</button></td>`;
+        }
+        html += '</tr>';
+      }
+      document.getElementById('cal-body').innerHTML = html;
+    }
+
+    function selectDate(dateStr) {
+      selectedDate = selectedDate === dateStr ? null : dateStr;
+      renderCalendar();
+      if (selectedDate) setView('day');
+      renderEvents();
+    }
+
+    function renderEvents() {
+      let events = [...EVENTS].sort((a,b) => a.date.localeCompare(b.date));
+      let label = 'All Upcoming Events';
+
+      if (viewMode === 'day' && selectedDate) {
+        events = events.filter(e => e.date === selectedDate);
+        const d = new Date(selectedDate + 'T00:00:00');
+        label = `Events on ${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+      }
+
+      document.getElementById('events-label').textContent = label;
+
+      if (!events.length) {
+        document.getElementById('events-list').innerHTML = `
+          <div class="empty-state">
+            <div class="emoji">📅</div>
+            <h3>No events ${selectedDate ? 'on this day' : 'found'}</h3>
+            <p>Try selecting a different date or view all upcoming events.</p>
+          </div>`;
+        return;
+      }
+
+      document.getElementById('events-list').innerHTML = events.map(e => {
+        const club = CLUBS.find(c => c.id === e.clubId);
+        const d = new Date(e.date + 'T00:00:00');
+        const dayNum = d.getDate();
+        const monthShort = MONTHS[d.getMonth()].slice(0,3);
+        return `
+        <div class="event-card">
+          <div class="event-date-block">
+            <span class="day-num">${dayNum}</span>
+            <span class="month-short">${monthShort}</span>
+          </div>
+          <div class="event-info">
+            <h4>${e.title}</h4>
+            <div class="event-meta-row">
+              <span class="event-meta-item">⏰ ${e.time}</span>
+              <span class="event-meta-item">📍 ${e.location}</span>
+            </div>
+            <p>${e.description}</p>
+            ${club ? `<span class="event-club-badge">${club.name}</span>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // Class schedule
+    function getClasses() {
+      try { return JSON.parse(localStorage.getItem('unt_classes')) || []; } catch { return []; }
+    }
+    function saveClasses(classes) { localStorage.setItem('unt_classes', JSON.stringify(classes)); }
+
+    function renderClasses() {
+      const classes = getClasses();
+      const list = document.getElementById('class-list');
+      if (!classes.length) { list.innerHTML = '<p style="font-size:0.85rem;color:var(--gray-400)">No classes added yet.</p>'; return; }
+      list.innerHTML = classes.map((c, i) => `
+        <div class="class-item">
+          <div>
+            <div class="class-name">${c.name}</div>
+            <div class="class-time">${c.days} · ${c.time}</div>
+          </div>
+          <button class="class-remove" onclick="removeClass(${i})" title="Remove">✕</button>
+        </div>`).join('');
+    }
+
+    function addClass() {
+      const name = document.getElementById('class-name').value.trim();
+      const days = document.getElementById('class-days').value.trim();
+      const time = document.getElementById('class-time').value.trim();
+      if (!name) { showToast('Please enter a class name.'); return; }
+      const classes = getClasses();
+      classes.push({ name, days: days || '—', time: time || '—' });
+      saveClasses(classes);
+      renderClasses();
+      document.getElementById('class-name').value = '';
+      document.getElementById('class-days').value = '';
+      document.getElementById('class-time').value = '';
+      showToast('Class added!');
+    }
+
+    function removeClass(index) {
+      const classes = getClasses();
+      classes.splice(index, 1);
+      saveClasses(classes);
+      renderClasses();
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // Check login for schedule note
+    if (!Auth.isLoggedIn()) {
+      document.getElementById('schedule-login-note').style.display = 'block';
+    }
+
+    renderCalendar();
+    renderEvents();
+    renderClasses();
+  </script>
+</body>
+</html>
