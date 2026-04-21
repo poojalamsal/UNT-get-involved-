@@ -1,76 +1,74 @@
-"""
-api_client.py
--------------
-This file is the "one place" where the frontend talks to the backend.
-
-Why we keep this separate:
-- ui_routes.py stays clean (no messy requests.get/post everywhere)
-- if the backend URL changes, we update it once here
-- error handling stays consistent across the app
-
-CURRENT BACKEND (Node/Express):
-- Server runs on: http://localhost:3000
-- Clubs route available now:
-    GET /clubs/search?category=technology
-
-NOT IMPLEMENTED YET (placeholders):
-- GET /clubs/<id>
-- POST /clubs/<id>/join-requests
-"""
-
 import os
 import requests
 
-# Node backend is running on port 3000 (backend/server.js)
+# Node backend
 API_BASE = os.getenv("API_BASE", "http://localhost:3000")
 
-
 def _auth_headers():
-    """
-    OPTIONAL (Aashi):
-    If endpoints require login later, attach auth here.
-    For now, return empty dict.
-    """
+    # Optional (Aashi): add auth later if needed
     return {}
 
-
 def _raise_for_status(resp: requests.Response):
-    """Make backend errors readable in the UI."""
     try:
         resp.raise_for_status()
     except requests.HTTPError:
-        content_type = resp.headers.get("content-type", "")
-        if "application/json" in content_type:
+        if "application/json" in (resp.headers.get("content-type") or ""):
             data = resp.json()
             raise Exception(data.get("message") or str(data))
         raise
 
-
-def get_clubs(category: str = ""):
-    """
-    WORKING ENDPOINT:
-      GET /clubs/search?category=...
-
-    Returns:
-      [{"id": 1, "name": "...", "category": "..."}, ...]
-    """
+def get_all_clubs():
+    """GET /clubs -> list all clubs"""
     resp = requests.get(
-        f"{API_BASE}/clubs/search",
-        params={"category": category},
+        f"{API_BASE}/clubs",
         headers=_auth_headers(),
         timeout=10
     )
     _raise_for_status(resp)
     return resp.json()
 
+def get_clubs(category: str = ""):
+    """
+    If category is provided:
+      GET /clubs/search?category=...
+    else:
+      GET /clubs (all clubs)
+    """
+    if category.strip():
+        resp = requests.get(
+            f"{API_BASE}/clubs/search",
+            params={"category": category},
+            headers=_auth_headers(),
+            timeout=10
+        )
+    else:
+        resp = requests.get(
+            f"{API_BASE}/clubs",
+            headers=_auth_headers(),
+            timeout=10
+        )
 
-# -----------------------------
-# Not implemented in backend yet
-# -----------------------------
+    _raise_for_status(resp)
+    return resp.json()
 
 def get_club_by_id(club_id: int):
-    raise NotImplementedError("Backend does not support GET /clubs/<id> yet.")
-
+    """GET /clubs/:id -> club details"""
+    resp = requests.get(
+        f"{API_BASE}/clubs/{club_id}",
+        headers=_auth_headers(),
+        timeout=10
+    )
+    _raise_for_status(resp)
+    return resp.json()
 
 def create_join_request(club_id: int, message: str = ""):
-    raise NotImplementedError("Backend does not support join requests yet.")
+    """POST /clubs/:id/join-requests -> create join request"""
+    payload = {"message": message}
+    resp = requests.post(
+        f"{API_BASE}/clubs/{club_id}/join-requests",
+        json=payload,
+        headers=_auth_headers(),
+        timeout=10
+    )
+    _raise_for_status(resp)
+    return resp.json()
