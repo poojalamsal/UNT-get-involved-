@@ -52,10 +52,14 @@
     <section>
       <h2>Explore Clubs</h2>
 
-      <!-- Search box connects to your /clubs route -->
+      <!-- Backend currently supports category search only -->
       <form method="GET" action="/clubs">
-        <input name="search" placeholder="Search clubs..." value="{{ search }}" />
-        <input name="category" placeholder="Category..." value="{{ category }}" />
+        <input
+          name="category"
+          placeholder="technology / music / community"
+          value="{{ category }}"
+          required
+        />
         <button type="submit">Search</button>
       </form>
 
@@ -68,10 +72,9 @@
       {% else %}
         <ul>
           {% for club in clubs %}
-            <!-- Ifunaya: confirm these field names -->
             <li>
               <a href="/clubs/{{ club['id'] }}">{{ club['name'] }}</a>
-              <p>{{ club.get('description', '') }}</p>
+              <p>Category: {{ club['category'] }}</p>
             </li>
           {% endfor %}
         </ul>
