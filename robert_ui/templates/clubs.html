@@ -29,36 +29,14 @@
     <hr>
 
     <section>
-      <h2>Start with</h2>
-
-      <button type="button">
-        <h3>Genre Search</h3>
-        <p>"What do you like doing?"</p>
-      </button>
-
-      <button type="button">
-        <h3>See Calendar</h3>
-        <p>"Free time? Join"</p>
-      </button>
-
-      <button type="button">
-        <h3>Check Your Page</h3>
-        <p>"Anything new?"</p>
-      </button>
-    </section>
-
-    <hr>
-
-    <section>
       <h2>Explore Clubs</h2>
 
-      <!-- Backend currently supports category search only -->
+      <!-- Category is optional now: blank = show all clubs -->
       <form method="GET" action="/clubs">
         <input
           name="category"
-          placeholder="technology / music / community"
+          placeholder="technology / music / community (leave blank to show all)"
           value="{{ category }}"
-          required
         />
         <button type="submit">Search</button>
       </form>
@@ -75,6 +53,10 @@
             <li>
               <a href="/clubs/{{ club['id'] }}">{{ club['name'] }}</a>
               <p>Category: {{ club['category'] }}</p>
+
+              {% if club.get('description') %}
+                <p>{{ club['description'] }}</p>
+              {% endif %}
             </li>
           {% endfor %}
         </ul>
