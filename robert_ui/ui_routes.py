@@ -29,31 +29,20 @@ def clubs_page():
     """
     Clubs Directory Page (Explore)
 
-    What this does:
-    1) Reads inputs from the URL query string (right now: category)
-    2) Calls the backend through api_client.py
-    3) Renders the Explore page template with the results
-
-    CURRENT LIMITATION:
-    - The backend only supports category search (no "search" keyword yet)
-      via GET /clubs/search?category=...
+    Backend currently supports:
+      GET http://localhost:3000/clubs/search?category=...
     """
-    # Backend expects "category" (technology/music/community)
     category = request.args.get("category", "").strip()
 
     try:
-        # Calls get_clubs(category=...) which hits /clubs/search on Node backend
         clubs = get_clubs(category=category)
-
         return render_template(
             "clubs.html",
             clubs=clubs,
             category=category,
             error=None
         )
-
     except Exception as e:
-        # If backend is down or category is missing, we show the page with an error message
         return render_template(
             "clubs.html",
             clubs=[],
