@@ -8,12 +8,12 @@ Why we keep this separate:
 - if the backend URL changes, we update it once here
 - error handling stays consistent across the app
 
-CURRENT BACKEND REALITY (Node/Express):
+CURRENT BACKEND (Node/Express):
 - Server runs on: http://localhost:3000
-- Clubs route available right now:
+- Clubs route available now:
     GET /clubs/search?category=technology
 
-NOT IMPLEMENTED YET (placeholders for later):
+NOT IMPLEMENTED YET (placeholders):
 - GET /clubs/<id>
 - POST /clubs/<id>/join-requests
 """
@@ -21,29 +21,21 @@ NOT IMPLEMENTED YET (placeholders for later):
 import os
 import requests
 
-# Node backend is running on port 3000 (from backend/server.js)
-# No "/api" prefix is used in that server setup.
+# Node backend is running on port 3000 (backend/server.js)
 API_BASE = os.getenv("API_BASE", "http://localhost:3000")
 
 
 def _auth_headers():
     """
     OPTIONAL (Aashi):
-    If the team decides to protect endpoints with login later,
-    we'll attach auth here (token/cookie/etc.).
-
-    For now, the backend routes we have are open, so we return {}.
+    If endpoints require login later, attach auth here.
+    For now, return empty dict.
     """
     return {}
 
 
 def _raise_for_status(resp: requests.Response):
-    """
-    Turn backend errors into something readable.
-
-    If the backend sends JSON like {"message": "..."},
-    we surface that message so the UI can display it.
-    """
+    """Make backend errors readable in the UI."""
     try:
         resp.raise_for_status()
     except requests.HTTPError:
@@ -56,20 +48,11 @@ def _raise_for_status(resp: requests.Response):
 
 def get_clubs(category: str = ""):
     """
-    Clubs list/search call (THIS ONE ACTUALLY WORKS RIGHT NOW).
-
-    Calls:
+    WORKING ENDPOINT:
       GET /clubs/search?category=...
 
     Returns:
-      [
-        {"id": 1, "name": "Coding Club", "category": "technology"},
-        ...
-      ]
-
-    NOTE:
-    - The backend currently filters by category only.
-    - If category is blank, backend may return empty or error depending on implementation.
+      [{"id": 1, "name": "...", "category": "..."}, ...]
     """
     resp = requests.get(
         f"{API_BASE}/clubs/search",
@@ -81,32 +64,13 @@ def get_clubs(category: str = ""):
     return resp.json()
 
 
-# -------------------------------------------------------------------
-# PLACEHOLDERS FOR "FINAL API INTEGRATION"
-# These routes do NOT exist in the Node backend yet.
-# Keep these functions so we can complete the feature later
-# once the backend team adds the endpoints.
-# -------------------------------------------------------------------
+# -----------------------------
+# Not implemented in backend yet
+# -----------------------------
 
 def get_club_by_id(club_id: int):
-    """
-    TODO:
-    Needs backend route:
-      GET /clubs/<id>
-
-    Right now, this is not implemented in backend/genreSearch.js,
-    so we raise NotImplementedError to make it obvious during testing.
-    """
     raise NotImplementedError("Backend does not support GET /clubs/<id> yet.")
 
 
 def create_join_request(club_id: int, message: str = ""):
-    """
-    TODO:
-    Needs backend route:
-      POST /clubs/<id>/join-requests
-
-    Right now, join requests do not exist in the Node backend,
-    so we raise NotImplementedError until it's added.
-    """
     raise NotImplementedError("Backend does not support join requests yet.")
