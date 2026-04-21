@@ -1,5 +1,5 @@
 // Backend API endpoint: Club List
-// Assigned to: Ifunaya (Priority 5)
+// Assigned to:Ifunaya (Priority 5)
 
 import { NextResponse } from "next/server"
 import { clubs } from "@/lib/data"
