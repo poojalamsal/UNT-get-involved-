@@ -248,6 +248,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="../js/data.js"></script>
+  <script src="../integrations.js"></script>
   <script>
     // Nav
     const _user = Auth.getUser();
@@ -273,6 +274,24 @@
     let currentDate = new Date();
     let selectedDate = null;
     let viewMode = 'all';
+    // Backend events pulled from Node (/events/saved)
+let BACKEND_EVENTS = [];
+
+async function loadBackendEvents() {
+  try {
+    const saved = await fetchSavedEvents(); // from integrations.js
+    BACKEND_EVENTS = (saved || []).map((e) => ({
+      title: e.title || "Saved Event",
+      date: e.date || "2026-01-01",
+      time: e.time || "TBA",
+      location: e.location || "TBA",
+      description: e.description || "",
+      clubId: e.clubId || null,
+    }));
+  } catch (err) {
+    BACKEND_EVENTS = [];
+  }
+}
 
     function setView(mode) {
       viewMode = mode;
@@ -294,7 +313,7 @@
       document.getElementById('cal-month-label').textContent = `${MONTHS[month]} ${year}`;
 
       const today = new Date();
-      const eventDates = new Set(EVENTS.map(e => e.date));
+      const eventDates = new Set([...EVENTS, ...BACKEND_EVENTS].map(e => e.date));
 
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -344,7 +363,7 @@
     }
 
     function renderEvents() {
-      let events = [...EVENTS].sort((a,b) => a.date.localeCompare(b.date));
+      let events = [...EVENTS, ...BACKEND_EVENTS].sort((a,b) => a.date.localeCompare(b.date));
       let label = 'All Upcoming Events';
 
       if (viewMode === 'day' && selectedDate) {
@@ -443,9 +462,12 @@
       document.getElementById('schedule-login-note').style.display = 'block';
     }
 
-    renderCalendar();
-    renderEvents();
-    renderClasses();
+    (async function init() {
+  await loadBackendEvents();
+  renderCalendar();
+  renderEvents();
+  renderClasses();
+})();
   </script>
 </body>
 </html>
