@@ -1,12 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
   <title>Club Details</title>
 </head>
 <body>
-  <!-- TODO (Pooja): replace this with the final Club Details UI -->
   <p><a href="/clubs">← Back to Clubs</a></p>
 
   {% with messages = get_flashed_messages() %}
@@ -23,16 +21,18 @@
     <p style="color:red;">Error: {{ error }}</p>
   {% endif %}
 
-  <!-- Data from Ifunaya: GET /api/clubs/<id> -->
   {% if club %}
-    <!-- TODO (Ifunaya): confirm field names -->
     <h1>{{ club["name"] }}</h1>
-    <p>{{ club.get("description","") }}</p>
+    <p><b>Category:</b> {{ club["category"] }}</p>
+
+    {% if club.get("description") %}
+      <p>{{ club["description"] }}</p>
+    {% endif %}
 
     <h3>Request to Join</h3>
     <form method="POST" action="/clubs/{{ club['id'] }}/join">
-      <label>Message (optional)</label>
-      <input name="message" />
+      <label for="message">Message (optional)</label><br>
+      <input id="message" name="message" />
       <button type="submit">Request to Join</button>
     </form>
   {% else %}
